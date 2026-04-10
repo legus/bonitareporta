@@ -2,7 +2,7 @@
   "meta": {
     "fecha": "2026-04-10T14:00:00Z",
     "github_user": "", 
-    "action": "", // Ej: "crear incidencia", "login",
+    "action": "", 
     "method": "GET|POST",
     "object": "Usuario/ciudadano/admin/funcionario/incidencia" 
   },
