@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "fecha": "2026-04-10T14:00:00Z",
+    "github_user": "", 
+    "action": "", // Ej: "crear incidencia", "login",
+    "method": "GET|POST",
+    "object": "Usuario/ciudadano/admin/funcionario/incidencia" 
+  },
+  "data": {
+    "tipo": "basura",
+    "descripcion": "Acumulación de residuos",
+    "ubicacion": {
+      "direccion": "Cra 33 #45",
+      "lat": 7.1193,
+      "lng": -73.1227,
+      "prioridad": "media"
+    },
+  "extra": {
+      "foto_url": null
+    }
+  }
+}

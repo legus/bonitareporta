@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "affected_rows": 1,
+  "insert_id": 42,     // para INSERT
+  "rows": [            // para SELECT
+    {
+      "campo1": "valor",
+      "campo2": "valor"
+    }
+  ],
+  "error": null// o mensaje si success=false
+}
