@@ -19,7 +19,7 @@ class incidenciaService {
         }
 
         $data["insert_data"]["estado"] = "Reportado";
-        $data["insert_data"]["prioridad"] = "Media;
+        $data["insert_data"]["prioridad"] = "Media";
 
         return [
             "success" => true,
