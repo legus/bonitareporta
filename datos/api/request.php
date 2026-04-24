@@ -2,7 +2,7 @@
 // api/request.php
 header('Content-Type: application/json');
 
-require_once '../func_datos/db_operations.php';
+require_once '../func_datos/func.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
 
