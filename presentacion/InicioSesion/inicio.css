@@ -1,0 +1,211 @@
+/* --- Variables globales de color y fuente --- */
+:root {
+  --fondo:       #111613;
+  --tarjeta:     #1a1f1c;
+  --input-fondo: #222823;
+  --borde:       #2e3530;
+  --verde:       #2d9e7a;
+  --verde-claro: #3abf93;
+  --texto:       #e8ede9;
+  --gris:        #7a8c82;
+  --rojo:        #e05c5c;
+  --fuente:      'Plus Jakarta Sans', sans-serif;
+}
+ 
+/* --- Reset: quita márgenes y ajusta el modelo de caja --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+/* --- Body: fondo oscuro, flex para apilar nav + main --- */
+body {
+  font-family: var(--fuente);
+  background: var(--fondo);
+  color: var(--texto);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+ 
+/* --- Navbar: logo a la izquierda, menú a la derecha --- */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--tarjeta);
+  border-bottom: 1px solid var(--borde);
+}
+ 
+/* Logo con nombre del sistema */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--texto);
+  text-decoration: none;
+}
+ 
+/* Punto verde que parpadea (animación 'parpadeo') */
+.nav-dot {
+  width: 10px; height: 10px;
+  background: var(--verde);
+  border-radius: 50%;
+  animation: parpadeo 2s infinite;
+}
+@keyframes parpadeo {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+ 
+/* Botón de menú hamburguesa */
+.nav-menu-btn { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; gap: 5px; }
+.nav-menu-btn span { display: block; width: 22px; height: 2px; background: var(--texto); border-radius: 2px; }
+ 
+/* --- Main: centra la tarjeta en la pantalla --- */
+main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+ 
+/* --- Tarjeta del formulario --- */
+.card {
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 380px; /* Ancho máximo ideal para móvil y escritorio */
+}
+ 
+/* Etiqueta "Bienvenido de nuevo" */
+.badge {
+  display: inline-block;
+  background: var(--input-fondo);
+  border: 1px solid var(--borde);
+  color: var(--gris);
+  font-size: .75rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+ 
+/* Título y subtítulo */
+h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 4px; }
+.subtitle { font-size: .875rem; color: var(--gris); margin-bottom: 28px; }
+ 
+/* Espacio entre campos del formulario */
+.field { margin-bottom: 18px; }
+ 
+/* Etiqueta de cada campo */
+label { display: block; font-size: .82rem; font-weight: 500; margin-bottom: 6px; }
+ 
+/* Inputs de texto */
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  width: 100%;
+  background: var(--input-fondo);
+  border: 1.5px solid var(--borde);
+  border-radius: 10px;
+  color: var(--texto);
+  font-family: var(--fuente);
+  font-size: .9rem;
+  padding: 10px 14px;
+  outline: none;
+}
+input:focus  { border-color: var(--verde); }  /* Borde verde al enfocar */
+input.invalid { border-color: var(--rojo); }  /* Borde rojo si hay error */
+ 
+/* Mensaje de error (oculto por defecto, JS agrega .visible para mostrarlo) */
+.field-error { font-size: .75rem; color: var(--rojo); margin-top: 4px; display: none; }
+.field-error.visible { display: block; }
+ 
+/* Enlace "¿Olvidaste tu contraseña?" alineado a la derecha */
+.forgot-row { text-align: right; margin-top: -10px; margin-bottom: 18px; }
+.forgot-row a { font-size: .78rem; color: var(--verde-claro); text-decoration: none; }
+.forgot-row a:hover { text-decoration: underline; }
+ 
+/* Botón principal "Ingresar" */
+.btn-primary {
+  width: 100%;
+  background: var(--verde);
+  color: #fff;
+  font-family: var(--fuente);
+  font-size: .95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  cursor: pointer;
+}
+.btn-primary:hover    { background: var(--verde-claro); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+ 
+/* Divisor "o continúa con" con líneas a los lados */
+.divider { display: flex; align-items: center; gap: 10px; margin: 20px 0; color: var(--gris); font-size: .78rem; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--borde); }
+ 
+/* Botón "Continuar con Google" */
+.btn-google {
+  width: 100%;
+  background: var(--input-fondo);
+  border: 1.5px solid var(--borde);
+  border-radius: 10px;
+  color: var(--texto);
+  font-family: var(--fuente);
+  font-size: .875rem;
+  padding: 11px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.btn-google:hover { border-color: var(--verde); }
+.google-icon { width: 18px; height: 18px; }
+ 
+/* Texto "¿No tienes cuenta?" al pie de la tarjeta */
+.card-footer { text-align: center; margin-top: 22px; font-size: .82rem; color: var(--gris); }
+.card-footer a { color: var(--verde-claro); text-decoration: none; font-weight: 500; }
+.card-footer a:hover { text-decoration: underline; }
+ 
+/* Toast: notificación flotante (oculta abajo por defecto) */
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px); /* Oculto fuera de pantalla */
+  background: var(--input-fondo);
+  border: 1px solid var(--borde);
+  border-left: 3px solid var(--verde); /* Verde = éxito */
+  color: var(--texto);
+  font-size: .85rem;
+  padding: 12px 20px;
+  border-radius: 10px;
+  transition: transform .3s ease;
+  z-index: 100;
+}
+.toast.show  { transform: translateX(-50%) translateY(0); } /* JS agrega .show para mostrarlo */
+.toast.error { border-left-color: var(--rojo); }            /* Rojo = error */
+ 
+/* Spinner dentro del botón mientras verifica el login */
+.loader {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: girar .7s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+@keyframes girar { to { transform: rotate(360deg); } }
+ 
+/* Wrapper de contraseña: posiciona el botón Ver/Ocultar dentro del input */
+.pass-wrapper { position: relative; }
+.pass-wrapper input { padding-right: 52px; } /* Espacio para el botón */
+.toggle-pass {
+  position: absolute;
+  right: 10px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none;
+  color: var(--verde-claro);
+  font-size: .78rem;
+  cursor: pointer;
+}
