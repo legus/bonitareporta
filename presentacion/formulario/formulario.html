@@ -1,218 +1,158 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BonitaReporta — Nuevo Reporte Ciudadano</title>
+    <link rel="stylesheet" href="formulario.css">
 
-  <!-- Bootstrap 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Estilos propios -->
-  <link rel="stylesheet" href="reporte.css" />
 </head>
 <body>
-
-  <div class="page-wrapper d-flex align-items-start justify-content-center py-5 px-3">
-    <div class="form-card w-100">
-
-      <!-- Encabezado -->
-      <div class="form-card__header d-flex align-items-center gap-3">
-        <div class="brand-icon d-flex align-items-center justify-content-center flex-shrink-0">
-          <i class="bi bi-geo-alt-fill"></i>
-        </div>
-        <div>
-          <h1 class="form-card__title mb-0">BonitaReporta</h1>
-          <p class="form-card__subtitle mb-0">Nuevo reporte ciudadano · Bucaramanga y área metropolitana</p>
-        </div>
-      </div>
-
-      <!-- Cuerpo -->
-      <div class="form-card__body">
-
-        <!-- Banner de éxito -->
-        <div class="alert-success-custom d-none" id="successBanner" role="alert">
-          <i class="bi bi-check-circle-fill"></i>
-          <span>¡Reporte enviado correctamente! Gracias por contribuir a tu ciudad.</span>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+            </div>
+            <h1>Reporte Ciudadano</h1>
+            <p class="subtitle">Reporta inconvenientes en tu ciudad de forma rápida y sencilla</p>
+            <div class="city-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                </svg>
+                Bucaramanga y área metropolitana
+            </div>
         </div>
 
-        <!-- Banner de error general -->
-        <div class="alert-error-custom d-none" id="errorBanner" role="alert">
-          <i class="bi bi-exclamation-triangle-fill"></i>
-          <span id="errorBannerMsg">Por favor completa todos los campos obligatorios.</span>
+        <!-- Formulario -->
+        <div class="form-card" id="formCard">
+            <form id="reportForm">
+                <div class="form-group">
+                    <label for="titulo">Título del reporte</label>
+                    <input type="text" id="titulo" name="titulo" placeholder="Ej: Falla de Alumbrado" required>
+                    <span class="error-msg">Este campo es obligatorio</span>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label for="tipo">Tipo de incidencia</label>
+                        <select id="tipo" name="tipo" required>
+                            <option value="" disabled selected>Selecciona...</option>
+                            <option value="Alumbrado">Alumbrado</option>
+                            <option value="Vialidad">Vialidad</option>
+                            <option value="Basura">Basura</option>
+                            <option value="Agua">Agua</option>
+                            <option value="Seguridad">Seguridad</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                        <span class="error-msg">Selecciona un tipo</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="zona">Ciudad / Zona</label>
+                        <select id="zona" name="zona" required>
+                            <option value="" disabled selected>Selecciona...</option>
+                            <option value="Norte">Norte</option>
+                            <option value="Sur">Sur</option>
+                            <option value="Centro">Centro</option>
+                            <option value="Oriente">Oriente</option>
+                            <option value="Occidente">Occidente</option>
+                            <option value="Floridablanca">Floridablanca</option>
+                            <option value="Giron">Girón</option>
+                            <option value="Piedecuesta">Piedecuesta</option>
+                        </select>
+                        <span class="error-msg">Selecciona una ciudad</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label for="barrio">Barrio</label>
+                        <input type="text" id="barrio" name="barrio" placeholder="Ej: La Esperanza" required>
+                        <span class="error-msg">Ingresa el barrio</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="usuario_id">ID de Usuario</label>
+                        <input type="number" id="usuario_id" name="usuario_id" placeholder="Ej: 12" required>
+                        <span class="error-msg">ID requerido</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="direccion">Dirección exacta</label>
+                    <input type="text" id="direccion" name="direccion" placeholder="Ej: Carrera 27 # 45-12, cerca al parque principal" required>
+                    <span class="error-msg">Ingresa una dirección válida</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción del problema</label>
+                    <textarea id="descripcion" name="descripcion" placeholder="Describe detalladamente el inconveniente..." required></textarea>
+                    <span class="error-msg">La descripción es obligatoria</span>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    <span class="btn-text">Enviar Reporte</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                    </svg>
+                    <div class="spinner"></div>
+                </button>
+            </form>
         </div>
 
-        <form id="reporteForm" novalidate>
-
-          <!-- SECCIÓN 1: Información del reporte -->
-          <div class="section-label">
-            <span>Información del reporte</span>
-          </div>
-
-          <!-- Tipo de incidente -->
-          <div class="mb-4">
-            <label class="field-label">Tipo de incidente <span class="req">*</span></label>
-            <div class="tipo-grid" id="tipoGrid">
-              <button type="button" class="tipo-btn active" data-tipo="Alumbrado">
-                <i class="bi bi-lightbulb-fill tipo-icon"></i>
-                <span class="tipo-name">Alumbrado</span>
-              </button>
-              <button type="button" class="tipo-btn" data-tipo="Vías">
-                <i class="bi bi-sign-turn-right-fill tipo-icon"></i>
-                <span class="tipo-name">Vías</span>
-              </button>
-              <button type="button" class="tipo-btn" data-tipo="Acueducto">
-                <i class="bi bi-droplet-fill tipo-icon"></i>
-                <span class="tipo-name">Acueducto</span>
-              </button>
-              <button type="button" class="tipo-btn" data-tipo="Basuras">
-                <i class="bi bi-trash3-fill tipo-icon"></i>
-                <span class="tipo-name">Basuras</span>
-              </button>
-              <button type="button" class="tipo-btn" data-tipo="Espacio Público">
-                <i class="bi bi-tree-fill tipo-icon"></i>
-                <span class="tipo-name">Espacio Público</span>
-              </button>
-              <button type="button" class="tipo-btn" data-tipo="Otro">
-                <i class="bi bi-clipboard2-fill tipo-icon"></i>
-                <span class="tipo-name">Otro</span>
-              </button>
-            </div>
-            <input type="hidden" id="tipoVal" value="Alumbrado" />
-            <div class="invalid-feedback-custom d-none" id="tipoError">Selecciona un tipo de incidente.</div>
-          </div>
-
-          <!-- Título -->
-          <div class="mb-3">
-            <label for="titulo" class="field-label">Título del reporte <span class="req">*</span></label>
-            <input
-              type="text"
-              class="field-input"
-              id="titulo"
-              placeholder="Ej: Falla de Alumbrado en carrera 15"
-              maxlength="80"
-              autocomplete="off"
-            />
-            <div class="invalid-feedback-custom d-none" id="tituloError">El título es obligatorio (mínimo 5 caracteres).</div>
-          </div>
-
-          <!-- Descripción -->
-          <div class="mb-4">
-            <label for="descripcion" class="field-label">Descripción <span class="req">*</span></label>
-            <textarea
-              class="field-input"
-              id="descripcion"
-              rows="4"
-              placeholder="Describe el problema con el mayor detalle posible..."
-              maxlength="400"
-            ></textarea>
-            <div class="d-flex justify-content-between align-items-center mt-1">
-              <div class="invalid-feedback-custom d-none" id="descripcionError">La descripción es obligatoria (mínimo 10 caracteres).</div>
-              <span class="char-counter ms-auto" id="charCount">0 / 400</span>
-            </div>
-          </div>
-
-          <!-- SECCIÓN 2: Ubicación -->
-          <div class="section-label">
-            <span>Ubicación</span>
-          </div>
-
-          <div class="row g-3 mb-3">
-            <!-- Zona -->
-            <div class="col-12 col-md-6">
-              <label for="zona" class="field-label">Zona <span class="req">*</span></label>
-              <select class="field-input field-select" id="zona">
-                <option value="">Seleccionar zona</option>
-                <option value="Norte">Norte</option>
-                <option value="Sur">Sur</option>
-                <option value="Oriente">Oriente</option>
-                <option value="Occidente">Occidente</option>
-                <option value="Centro">Centro</option>
-                <option value="Floridablanca">Floridablanca</option>
-                <option value="Girón">Girón</option>
-                <option value="Piedecuesta">Piedecuesta</option>
-              </select>
-              <div class="invalid-feedback-custom d-none" id="zonaError">Selecciona una zona.</div>
+        <!-- Respuesta / Ticket -->
+        <div class="response-card" id="responseCard">
+            <div class="response-header">
+                <div class="success-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                </div>
+                <h2>¡Reporte enviado con éxito!</h2>
+                <div class="ticket-id" id="ticketId">Incidencia #501</div>
             </div>
 
-            <!-- Barrio -->
-            <div class="col-12 col-md-6">
-              <label for="barrio" class="field-label">Barrio <span class="req">*</span></label>
-              <input
-                type="text"
-                class="field-input"
-                id="barrio"
-                placeholder="Ej: La Esperanza"
-                maxlength="60"
-                autocomplete="off"
-              />
-              <div class="invalid-feedback-custom d-none" id="barrioError">El barrio es obligatorio.</div>
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="label">Estado</div>
+                    <div class="value estado-value" id="estadoValue">Pendiente</div>
+                </div>
+                <div class="status-item">
+                    <div class="label">Prioridad</div>
+                    <div class="value prioridad-media" id="prioridadValue">Media</div>
+                </div>
             </div>
-          </div>
 
-          <!-- Dirección / Ubicación -->
-          <div class="mb-4">
-            <label for="direccion" class="field-label">Dirección / Ubicación <span class="req">*</span></label>
-            <div class="input-icon-wrap">
-              <i class="bi bi-geo-alt input-icon"></i>
-              <input
-                type="text"
-                class="field-input field-input--icon"
-                id="direccion"
-                placeholder="Ej: Cra. 15 #45-32, frente al parque principal"
-                maxlength="120"
-                autocomplete="off"
-              />
+            <div class="report-summary">
+                <h3>Resumen del reporte</h3>
+                <div class="summary-row">
+                    <span class="key">Título</span>
+                    <span class="val" id="sumTitulo">Falla de Alumbrado</span>
+                </div>
+                <div class="summary-row">
+                    <span class="key">Tipo</span>
+                    <span class="val"><span class="tag-tipo" id="sumTipo">Alumbrado</span></span>
+                </div>
+                <div class="summary-row">
+                    <span class="key">Ciudad / Barrio</span>
+                    <span class="val" id="sumZona">Bucaramanga / La Esperanza</span>
+                </div>
+                <div class="summary-row">
+                    <span class="key">Dirección</span>
+                    <span class="val" id="sumDireccion">Carrera 27 # 45-12</span>
+                </div>
+                <div class="summary-row">
+                    <span class="key">Descripción</span>
+                    <span class="val" id="sumDescripcion">Poste parpadea toda la noche</span>
+                </div>
             </div>
-            <div class="field-hint">Incluye referencias visuales que ayuden a identificar el punto exacto.</div>
-            <div class="invalid-feedback-custom d-none" id="direccionError">La dirección o ubicación es obligatoria.</div>
-          </div>
 
-          <!-- SECCIÓN 3: Usuario -->
-          <div class="section-label">
-            <span>Usuario</span>
-          </div>
-
-          <div class="mb-4">
-            <label for="usuario_id" class="field-label">ID de usuario <span class="req">*</span></label>
-            <div class="d-flex gap-2 align-items-center">
-              <input
-                type="number"
-                class="field-input"
-                id="usuario_id"
-                placeholder="Ej: 12"
-                min="1"
-                style="max-width: 180px;"
-              />
-              <span class="badge-ciudadano">
-                <i class="bi bi-patch-check-fill me-1"></i>Ciudadano verificado
-              </span>
-            </div>
-            <div class="invalid-feedback-custom d-none" id="usuarioError">Ingresa un ID de usuario válido.</div>
-          </div>
-
-          <!-- Botones -->
-          <hr class="form-divider" />
-          <div class="d-flex gap-3 flex-wrap">
-            <button type="button" class="btn-cancel" id="btnCancelar">
-              <i class="bi bi-x-lg me-1"></i>Cancelar
-            </button>
-            <button type="submit" class="btn-submit flex-grow-1" id="btnEnviar">
-              <i class="bi bi-send-fill me-2"></i>Enviar reporte
-            </button>
-          </div>
-
-        </form>
-      </div><!-- /form-card__body -->
-    </div><!-- /form-card -->
-  </div><!-- /page-wrapper -->
-
+            <button class="btn-new" id="btnNew">Enviar otro reporte</button>
+        </div>
+    </div>
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Validación y lógica -->
-  <script src="reporte.js"></script>
+  <script src="formulario.js"></script>
 </body>
 </html>
