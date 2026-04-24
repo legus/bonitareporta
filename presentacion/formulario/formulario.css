@@ -1,0 +1,394 @@
+/* ============================================================
+   reporte.css — BonitaReporta
+   Paleta oscura con acento verde / Bootstrap 5 override
+   ============================================================ */
+
+:root {
+  --fondo:       #111613;
+  --tarjeta:     #1a1f1c;
+  --input-fondo: #222823;
+  --borde:       #2e3530;
+  --verde:       #2d9e7a;
+  --verde-claro: #3abf93;
+  --texto:       #e8ede9;
+  --gris:        #7a8c82;
+  --rojo:        #e05c5c;
+  --fuente:      'Plus Jakarta Sans', sans-serif;
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--fuente);
+  background-color: var(--fondo);
+  color: var(--texto);
+  min-height: 100vh;
+}
+
+/* ── Wrapper de página ───────────────────────────────────── */
+.page-wrapper {
+  min-height: 100vh;
+}
+
+/* ── Tarjeta principal ───────────────────────────────────── */
+.form-card {
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 18px;
+  max-width: 660px;
+  overflow: hidden;
+  animation: fadeUp .45s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Encabezado ──────────────────────────────────────────── */
+.form-card__header {
+  padding: 1.5rem 2rem 1.35rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  background: var(--verde);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.form-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--texto);
+  letter-spacing: -.01em;
+}
+
+.form-card__subtitle {
+  font-size: .75rem;
+  color: var(--gris);
+  margin-top: 2px;
+}
+
+/* ── Cuerpo ──────────────────────────────────────────────── */
+.form-card__body {
+  padding: 1.75rem 2rem 2rem;
+}
+
+/* ── Etiqueta de sección ─────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--verde-claro);
+  margin-bottom: 1.1rem;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--borde);
+}
+
+/* ── Labels ──────────────────────────────────────────────── */
+.field-label {
+  display: block;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--gris);
+  margin-bottom: 7px;
+  letter-spacing: .025em;
+}
+
+.req {
+  color: var(--rojo);
+  margin-left: 2px;
+}
+
+/* ── Inputs, selects, textarea ───────────────────────────── */
+.field-input {
+  width: 100%;
+  background: var(--input-fondo);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  color: var(--texto);
+  font-family: var(--fuente);
+  font-size: .88rem;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  appearance: none;
+}
+
+.field-input:focus {
+  border-color: var(--verde);
+  box-shadow: 0 0 0 3px rgba(45, 158, 122, .18);
+}
+
+.field-input::placeholder {
+  color: var(--gris);
+  opacity: .55;
+}
+
+.field-input.is-invalid {
+  border-color: var(--rojo);
+  box-shadow: 0 0 0 3px rgba(224, 92, 92, .15);
+}
+
+.field-input.is-valid {
+  border-color: var(--verde);
+}
+
+/* Select con flecha propia */
+.field-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a8c82' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.field-select option {
+  background: #1a1f1c;
+  color: var(--texto);
+}
+
+/* Textarea */
+textarea.field-input {
+  resize: vertical;
+  line-height: 1.55;
+}
+
+/* ── Input con icono ─────────────────────────────────────── */
+.input-icon-wrap {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--verde);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.field-input--icon {
+  padding-left: 38px;
+}
+
+/* ── Hint bajo el campo ──────────────────────────────────── */
+.field-hint {
+  font-size: .72rem;
+  color: var(--gris);
+  margin-top: 5px;
+  opacity: .8;
+}
+
+/* ── Contador de caracteres ──────────────────────────────── */
+.char-counter {
+  font-size: .72rem;
+  color: var(--gris);
+  transition: color .2s;
+}
+
+.char-counter.warn {
+  color: var(--rojo);
+}
+
+/* ── Feedback de validación ──────────────────────────────── */
+.invalid-feedback-custom {
+  font-size: .75rem;
+  color: var(--rojo);
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.invalid-feedback-custom::before {
+  content: '\F333';
+  font-family: 'bootstrap-icons';
+  font-size: .8rem;
+}
+
+/* ── Grid de tipos de incidente ──────────────────────────── */
+.tipo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .6rem;
+}
+
+.tipo-btn {
+  background: var(--input-fondo);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: .75rem .5rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--gris);
+  transition: border-color .2s, background .2s, color .2s;
+}
+
+.tipo-btn:hover {
+  border-color: var(--verde);
+  background: rgba(45, 158, 122, .07);
+}
+
+.tipo-btn.active {
+  border-color: var(--verde-claro);
+  background: rgba(58, 191, 147, .12);
+  color: var(--verde-claro);
+}
+
+.tipo-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.tipo-name {
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ── Badge ciudadano ─────────────────────────────────────── */
+.badge-ciudadano {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(45, 158, 122, .14);
+  border: 1px solid rgba(45, 158, 122, .3);
+  border-radius: 8px;
+  color: var(--verde-claro);
+  font-size: .75rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  white-space: nowrap;
+}
+
+/* ── Divisor ─────────────────────────────────────────────── */
+.form-divider {
+  border-color: var(--borde);
+  margin: 1.5rem 0;
+  opacity: 1;
+}
+
+/* ── Botones de acción ───────────────────────────────────── */
+.btn-cancel {
+  background: transparent;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  color: var(--gris);
+  font-family: var(--fuente);
+  font-size: .88rem;
+  font-weight: 500;
+  padding: 11px 22px;
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+  white-space: nowrap;
+}
+
+.btn-cancel:hover {
+  border-color: var(--gris);
+  color: var(--texto);
+}
+
+.btn-submit {
+  background: var(--verde);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-family: var(--fuente);
+  font-size: .9rem;
+  font-weight: 700;
+  padding: 12px 28px;
+  cursor: pointer;
+  letter-spacing: .01em;
+  transition: background .2s, transform .15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-submit:hover {
+  background: var(--verde-claro);
+}
+
+.btn-submit:active {
+  transform: scale(.98);
+}
+
+.btn-submit:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Banners de alerta ───────────────────────────────────── */
+.alert-success-custom,
+.alert-error-custom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 12px;
+  padding: .9rem 1.1rem;
+  margin-bottom: 1.25rem;
+  font-size: .85rem;
+  font-weight: 500;
+}
+
+.alert-success-custom {
+  background: rgba(45, 158, 122, .12);
+  border: 1px solid rgba(45, 158, 122, .3);
+  color: var(--verde-claro);
+}
+
+.alert-error-custom {
+  background: rgba(224, 92, 92, .1);
+  border: 1px solid rgba(224, 92, 92, .3);
+  color: var(--rojo);
+}
+
+.alert-success-custom i,
+.alert-error-custom i {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 520px) {
+  .form-card__header,
+  .form-card__body {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .tipo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .btn-cancel,
+  .btn-submit {
+    width: 100%;
+    justify-content: center;
+  }
+}

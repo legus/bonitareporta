@@ -1,0 +1,40 @@
+/* =============================================
+   inicio.css — Solo estilos que Bootstrap no cubre
+   ============================================= */
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Punto verde animado en el navbar */
+.nav-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: pulso 1.8s ease-in-out infinite;
+}
+
+@keyframes pulso {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* Suaviza el radio de los inputs para que coincida con la tarjeta */
+.form-control,
+.btn,
+.input-group .form-control,
+.input-group .btn {
+  border-radius: 8px !important;
+}
+
+.input-group .form-control {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.input-group .btn {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
