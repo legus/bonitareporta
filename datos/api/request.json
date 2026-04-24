@@ -1,0 +1,17 @@
+{
+  "operation": "INSERT",
+  "table": "incidencias",
+  "insert_data": {
+    "titulo": "",
+    "tipo": "",
+    "descripcion": "",
+    "zona": "",
+    "barrio": "",
+    "usuario_id": ,
+    "lat": ,
+    "lng": ,
+    "estado": "",
+    "prioridad": "",
+    "fecha_creacion": ""
+  }
+}
