@@ -2,16 +2,16 @@
   "operation": "INSERT",
   "table": "incidencias",
   "insert_data": {
-    "titulo": "",
-    "tipo": "",
-    "descripcion": "",
-    "zona": "",
-    "barrio": "",
-    "usuario_id": ,
-    "lat": ,
-    "lng": ,
-    "estado": "",
-    "prioridad": "",
-    "fecha_creacion": ""
+    "titulo": "Falla de Alumbrado",
+    "tipo": "Alumbrado",
+    "descripcion": "Poste parpadea toda la noche",
+    "zona": "Norte",
+    "barrio": "La Esperanza",
+    "usuario_id": 12,
+    "lat": 7.12,
+    "lng": -73.11,
+    "estado": "Pendiente",
+    "prioridad": "Media",
+    "fecha_creacion": "2026-04-24 15:25:00"
   }
 }
