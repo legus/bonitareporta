@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BonitaReporta — Crear cuenta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="crear.css" />
+<base target="_blank">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a class="nav-brand" href="../index.html">
+      <span class="nav-dot"></span>
+      BonitaReporta
+    </a>
+    <button class="nav-menu-btn" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+    <div class="card">
+
+      <span class="badge">Nuevo usuario</span>
+      <h1>Crear cuenta</h1>
+      <p class="subtitle">Regístrate para empezar a reportar incidencias</p>
+
+      <div id="registerForm">
+
+        <!-- Nombre y Apellido -->
+        <div class="row-fields">
+          <div class="field">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" placeholder="Tu nombre" autocomplete="given-name" />
+            <span class="field-error" id="nombreError">Ingresa tu nombre.</span>
+          </div>
+          <div class="field">
+            <label for="apellido">Apellido</label>
+            <input type="text" id="apellido" placeholder="Tu apellido" autocomplete="family-name" />
+            <span class="field-error" id="apellidoError">Ingresa tu apellido.</span>
+          </div>
+        </div>
+
+        <!-- Correo -->
+        <div class="field">
+          <label for="email">Correo electrónico</label>
+          <input type="email" id="email" placeholder="ejemplo@correo.com" autocomplete="email" />
+          <span class="field-error" id="emailError">Ingresa un correo válido.</span>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <div class="pass-wrapper">
+            <input type="password" id="password" placeholder="Crea una contraseña" autocomplete="new-password" />
+            <button class="toggle-pass" id="togglePass" type="button">
+              <span id="textoOjo">Ver</span>
+            </button>
+          </div>
+          <span class="field-error" id="passError">La contraseña no cumple los requisitos.</span>
+          <!-- Requisitos visuales -->
+          <div class="pass-requirements" id="passReqs">
+            <p>La contraseña debe tener:</p>
+            <div class="req-item" id="reqLen">Mínimo 6 caracteres</div>
+            <div class="req-item" id="reqNum">Al menos un número</div>
+            <div class="req-item" id="reqMay">Al menos una mayúscula</div>
+          </div>
+        </div>
+
+        <!-- Confirmar contraseña -->
+        <div class="field">
+          <label for="confirmPassword">Confirmar contraseña</label>
+          <div class="pass-wrapper">
+            <input type="password" id="confirmPassword" placeholder="Repite tu contraseña" autocomplete="new-password" />
+            <button class="toggle-pass" id="toggleConfirmPass" type="button">
+              <span id="textoOjoConfirm">Ver</span>
+            </button>
+          </div>
+          <span class="field-error" id="confirmError">Las contraseñas no coinciden.</span>
+        </div>
+
+        <!-- Botón crear cuenta -->
+        <button class="btn-primary" id="btnCrear" type="button">Crear cuenta</button>
+
+        <div class="divider">o regístrate con</div>
+
+        <!-- Botón Google -->
+        <button class="btn-google" type="button" id="btnGoogle">
+          <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Continuar con Google
+        </button>
+
+      </div>
+
+      <!-- Enlace a iniciar sesión -->
+      <p class="card-footer">
+        ¿Ya tienes cuenta? <a href="../InicioSesion/inicio.html">Inicia sesión</a>
+      </p>
+
+    </div>
+  </main>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="crear.js"></script>
+</body>
+</html>
