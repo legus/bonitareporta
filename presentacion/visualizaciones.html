@@ -1,1 +1,813 @@
-//listas, graficos, pmapas interactivos
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BonitaReporta – Dashboard de Incidencias</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #0f0f0f;
+      --surface:   #141414;
+      --card:      #1a1a1a;
+      --border:    #252525;
+      --accent:    #2ec9a0;
+      --accent2:   #27b890;
+      --accent-btn:#2ec9a0;
+      --danger:    #e05252;
+      --success:   #2ec9a0;
+      --text:      #e8eaf0;
+      --muted:     #5a6270;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-family: var(--font-head);
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--accent); }
+    .header-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── MAIN LAYOUT ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .section-title {
+      font-family: var(--font-head);
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    .section-title small {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 400;
+      font-family: var(--font-body);
+      color: var(--muted);
+      margin-top: 4px;
+      letter-spacing: 0;
+    }
+
+    /* ── STAT PILLS ── */
+    .stats-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .stat-pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      min-width: 130px;
+      flex: 1;
+      transition: border-color .2s;
+    }
+    .stat-pill:hover { border-color: var(--accent); box-shadow: 0 0 16px rgba(46,201,160,.12); }
+    .stat-pill .label {
+      font-size: 0.7rem;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .stat-pill .value {
+      font-family: var(--font-head);
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .stat-pill.accent .value  { color: var(--accent); }
+    .stat-pill.cyan   .value  { color: var(--accent); }
+    .stat-pill.danger .value  { color: var(--danger); }
+    .stat-pill.success .value { color: var(--accent); }
+
+    /* ── FILTERS ── */
+    .filters {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+    .filters label {
+      font-size: .75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-right: .25rem;
+    }
+    .filter-select, .filter-input {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: .45rem .85rem;
+      font-family: var(--font-body);
+      font-size: .85rem;
+      cursor: pointer;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .filter-select:hover,
+    .filter-input:hover,
+    .filter-select:focus,
+    .filter-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(46,201,160,.12); }
+
+    .btn-refresh {
+      margin-left: auto;
+      background: var(--accent);
+      color: #0a0c0f;
+      border: none;
+      border-radius: 10px;
+      padding: .5rem 1.2rem;
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: .85rem;
+      cursor: pointer;
+      letter-spacing: .5px;
+      transition: opacity .2s, transform .1s;
+      box-shadow: 0 0 18px rgba(46,201,160,.25);
+    }
+    .btn-refresh:hover { opacity: .88; box-shadow: 0 0 28px rgba(46,201,160,.4); }
+    .btn-refresh:active { transform: scale(.97); }
+
+    /* ── TOGGLE VIEW ── */
+    .view-toggle {
+      display: flex;
+      gap: .5rem;
+    }
+    .view-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 8px;
+      padding: .45rem .8rem;
+      cursor: pointer;
+      font-size: .9rem;
+      transition: all .2s;
+    }
+    .view-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0a0c0f;
+    }
+
+    /* ── CARDS GRID ── */
+    #cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 1.25rem;
+    }
+    #cards-container.list-view {
+      grid-template-columns: 1fr;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      animation: fadeUp .35s ease both;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 14px 14px 0 0;
+    }
+    .card.prioridad-alta::before   { background: var(--danger); }
+    .card.prioridad-media::before  { background: var(--accent); }
+    .card.prioridad-baja::before   { background: rgba(46,201,160,.4); }
+
+    .card:hover {
+      border-color: rgba(46,201,160,.3);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0,0,0,.5), 0 0 0 1px rgba(46,201,160,.08);
+    }
+
+    .list-view .card {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 1.2rem;
+    }
+    .list-view .card .card-body { flex: 1; }
+
+    /* card parts */
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: .5rem;
+    }
+    .card-title {
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 1rem;
+      line-height: 1.3;
+    }
+    .card-id {
+      font-size: .7rem;
+      color: var(--muted);
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      border-radius: 6px;
+      padding: 3px 9px;
+      white-space: nowrap;
+    }
+    .badge-estado-pendiente  { background: rgba(46,201,160,.12); color: var(--accent); }
+    .badge-estado-en_proceso { background: rgba(46,201,160,.2);  color: #6fffcc; }
+    .badge-estado-resuelto   { background: rgba(46,201,160,.15); color: var(--accent); }
+    .badge-estado-rechazado  { background: rgba(224,82,82,.15);  color: var(--danger); }
+
+    .badge-prioridad-alta   { background: rgba(224,82,82,.12);  color: var(--danger);  border: 1px solid rgba(224,82,82,.3); }
+    .badge-prioridad-media  { background: rgba(46,201,160,.1);  color: var(--accent);  border: 1px solid rgba(46,201,160,.3); }
+    .badge-prioridad-baja   { background: rgba(46,201,160,.06); color: #4ab895; border: 1px solid rgba(46,201,160,.2); }
+
+    .card-meta {
+      font-size: .78rem;
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem .85rem;
+    }
+    .card-meta span { display: flex; align-items: center; gap: 4px; }
+
+    .card-desc {
+      font-size: .83rem;
+      color: #a0a8b8;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .list-view .card-desc { -webkit-line-clamp: 2; }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: .5rem;
+      border-top: 1px solid var(--border);
+      font-size: .73rem;
+      color: var(--muted);
+    }
+
+    /* ── TABLE VIEW ── */
+    #table-container { display: none; overflow-x: auto; }
+    #table-container.active { display: block; }
+    #cards-wrapper.table-mode #cards-container { display: none; }
+    #cards-wrapper.table-mode #table-container { display: block; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .83rem;
+    }
+    thead tr {
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+    }
+    th {
+      font-family: var(--font-head);
+      font-size: .7rem;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: .85rem 1rem;
+      text-align: left;
+      white-space: nowrap;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+    tbody tr:hover { background: var(--card); }
+    td {
+      padding: .8rem 1rem;
+      color: var(--text);
+      vertical-align: middle;
+    }
+    td .cell-title { font-weight: 500; }
+    td .cell-sub   { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+
+    /* ── EMPTY / LOADING / ERROR ── */
+    .state-box {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--muted);
+    }
+    .state-box .icon { font-size: 2.5rem; margin-bottom: .75rem; }
+    .state-box p { font-size: .9rem; }
+    .state-box p b { color: var(--text); }
+
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    /* ── MODAL ── */
+    .modal-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.7);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 560px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: fadeUp .25s ease;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .modal-title {
+      font-family: var(--font-head);
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .modal-close {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 8px;
+      width: 32px; height: 32px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .modal-close:hover { border-color: var(--accent); color: var(--accent); }
+    .modal-field { margin-bottom: 1rem; }
+    .modal-label {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .modal-value { font-size: .9rem; color: var(--text); line-height: 1.5; }
+    .modal-map {
+      width: 100%; height: 200px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: .85rem; margin-top: .5rem;
+    }
+    .modal-map a {
+      color: var(--accent); text-decoration: underline;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .section-title { font-size: 1.5rem; }
+      .stats-row { gap: .6rem; }
+      .stat-pill { min-width: 100px; padding: .75rem 1rem; }
+      .stat-pill .value { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Bonita<span>Reporta</span></div>
+  <span class="header-badge">Dashboard · Visualizaciones</span>
+</header>
+
+<!-- MAIN -->
+<main>
+  <div class="section-header">
+    <div class="section-title">
+      Incidencias Urbanas
+      <small>Bucaramanga · Reportes ciudadanos en tiempo real</small>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row" id="stats-row">
+    <div class="stat-pill accent"><div class="label">Total</div><div class="value" id="stat-total">—</div></div>
+    <div class="stat-pill danger"><div class="label">Alta prioridad</div><div class="value" id="stat-alta">—</div></div>
+    <div class="stat-pill"><div class="label">Pendientes</div><div class="value" id="stat-pendiente">—</div></div>
+    <div class="stat-pill cyan"><div class="label">En proceso</div><div class="value" id="stat-proceso">—</div></div>
+    <div class="stat-pill success"><div class="label">Resueltas</div><div class="value" id="stat-resuelto">—</div></div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <label>Filtrar:</label>
+    <select class="filter-select" id="filter-estado">
+      <option value="">Todos los estados</option>
+      <option value="pendiente">Pendiente</option>
+      <option value="en_proceso">En proceso</option>
+      <option value="resuelto">Resuelto</option>
+      <option value="rechazado">Rechazado</option>
+    </select>
+    <select class="filter-select" id="filter-tipo">
+      <option value="">Todos los tipos</option>
+      <option value="hueco">Hueco</option>
+      <option value="luz_danada">Luz dañada</option>
+      <option value="basura">Basura</option>
+      <option value="otro">Otro</option>
+    </select>
+    <select class="filter-select" id="filter-prioridad">
+      <option value="">Toda prioridad</option>
+      <option value="alta">Alta</option>
+      <option value="media">Media</option>
+      <option value="baja">Baja</option>
+    </select>
+    <input class="filter-input" id="filter-search" type="text" placeholder="Buscar por título o barrio…" style="min-width:180px"/>
+
+    <div class="view-toggle">
+      <button class="view-btn active" id="btn-card" title="Vista tarjetas">⊞</button>
+      <button class="view-btn" id="btn-list" title="Vista lista">☰</button>
+      <button class="view-btn" id="btn-table" title="Vista tabla">▦</button>
+    </div>
+
+    <button class="btn-refresh" id="btn-refresh">↻ Actualizar</button>
+  </div>
+
+  <!-- CARDS + TABLE WRAPPER -->
+  <div id="cards-wrapper">
+    <div id="cards-container">
+      <!-- cards rendered by JS -->
+    </div>
+    <div id="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Título</th>
+            <th>Tipo</th>
+            <th>Zona / Barrio</th>
+            <th>Estado</th>
+            <th>Prioridad</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL DETALLE -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Detalle de incidencia</div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+//  CONFIGURACIÓN — ajusta la ruta de tu API
+// ─────────────────────────────────────────
+const API_URL = '../api/incidencias.php';   // ← ruta relativa al endpoint PHP
+
+// ─────────────────────────────────────────
+//  DATOS DE DEMO (usados si la API falla)
+// ─────────────────────────────────────────
+const DEMO_DATA = [
+  { id:1, titulo:'Hueco profundo en Av. Bucarica', tipo:'hueco', descripcion:'Hueco de gran tamaño en carril derecho, peligroso para motos.', zona:'Norte', barrio:'Cabecera', usuario_id:3, lat:7.119, lng:-73.122, estado:'pendiente', prioridad:'alta', fecha_creacion:'2025-04-20 08:14:00' },
+  { id:2, titulo:'Poste de luz apagado', tipo:'luz_danada', descripcion:'Lleva más de una semana sin encender, zona muy oscura de noche.', zona:'Sur', barrio:'Sotomayor', usuario_id:7, lat:7.105, lng:-73.118, estado:'en_proceso', prioridad:'media', fecha_creacion:'2025-04-19 17:30:00' },
+  { id:3, titulo:'Acumulación de basura', tipo:'basura', descripcion:'Esquina llena de bolsas sin recoger desde hace 4 días.', zona:'Centro', barrio:'Girardot', usuario_id:2, lat:7.112, lng:-73.113, estado:'pendiente', prioridad:'baja', fecha_creacion:'2025-04-18 10:05:00' },
+  { id:4, titulo:'Bache en calle 45', tipo:'hueco', descripcion:'Tres huecos seguidos en mal estado, dañan llantas.', zona:'Occidente', barrio:'Provenza', usuario_id:5, lat:7.123, lng:-73.130, estado:'resuelto', prioridad:'alta', fecha_creacion:'2025-04-15 09:00:00' },
+  { id:5, titulo:'Semáforo sin funcionar', tipo:'otro', descripcion:'Semáforo peatonal en Carrera 33 con Calle 49 apagado.', zona:'Centro', barrio:'La Aurora', usuario_id:9, lat:7.110, lng:-73.110, estado:'en_proceso', prioridad:'alta', fecha_creacion:'2025-04-21 07:45:00' },
+  { id:6, titulo:'Basura en parque La Flora', tipo:'basura', descripcion:'Residuos dispersos en el parque principal del barrio.', zona:'Norte', barrio:'La Flora', usuario_id:1, lat:7.130, lng:-73.125, estado:'pendiente', prioridad:'media', fecha_creacion:'2025-04-22 11:20:00' },
+];
+
+// ─────────────────────────────────────────
+//  ESTADO GLOBAL
+// ─────────────────────────────────────────
+let allData = [];
+let currentView = 'card'; // 'card' | 'list' | 'table'
+
+// ─────────────────────────────────────────
+//  FETCH INCIDENCIAS
+// ─────────────────────────────────────────
+async function fetchIncidencias() {
+  showLoading();
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    // Acepta array directo o wrapper { data: [...] }
+    allData = Array.isArray(json) ? json : (json.data ?? []);
+    if (!allData.length) throw new Error('vacío');
+  } catch (e) {
+    console.warn('API no disponible, usando datos de demo.', e.message);
+    allData = DEMO_DATA;
+    showApiNote();
+  }
+  updateStats();
+  renderAll();
+}
+
+// ─────────────────────────────────────────
+//  FILTROS
+// ─────────────────────────────────────────
+function getFiltered() {
+  const estado    = document.getElementById('filter-estado').value;
+  const tipo      = document.getElementById('filter-tipo').value;
+  const prioridad = document.getElementById('filter-prioridad').value;
+  const search    = document.getElementById('filter-search').value.toLowerCase().trim();
+  return allData.filter(d => {
+    if (estado    && d.estado    !== estado)    return false;
+    if (tipo      && d.tipo      !== tipo)      return false;
+    if (prioridad && d.prioridad !== prioridad) return false;
+    if (search && !d.titulo.toLowerCase().includes(search) && !d.barrio.toLowerCase().includes(search)) return false;
+    return true;
+  });
+}
+
+// ─────────────────────────────────────────
+//  STATS
+// ─────────────────────────────────────────
+function updateStats() {
+  document.getElementById('stat-total').textContent     = allData.length;
+  document.getElementById('stat-alta').textContent      = allData.filter(d=>d.prioridad==='alta').length;
+  document.getElementById('stat-pendiente').textContent = allData.filter(d=>d.estado==='pendiente').length;
+  document.getElementById('stat-proceso').textContent   = allData.filter(d=>d.estado==='en_proceso').length;
+  document.getElementById('stat-resuelto').textContent  = allData.filter(d=>d.estado==='resuelto').length;
+}
+
+// ─────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────
+function renderAll() {
+  const data = getFiltered();
+  if (currentView === 'table') renderTable(data);
+  else renderCards(data);
+}
+
+function renderCards(data) {
+  const container = document.getElementById('cards-container');
+  if (!data.length) {
+    container.innerHTML = `<div class="state-box"><div class="icon">🔍</div><p>No se encontraron incidencias con los filtros seleccionados.</p></div>`;
+    return;
+  }
+  container.innerHTML = '';
+  data.forEach((d, i) => {
+    const card = document.createElement('div');
+    card.className = `card prioridad-${d.prioridad}`;
+    card.style.animationDelay = `${i * 0.04}s`;
+    card.innerHTML = `
+      <div class="card-head">
+        <div>
+          <div class="card-title">${esc(d.titulo)}</div>
+          <div class="card-id">#${d.id}</div>
+        </div>
+        <span class="badge badge-estado-${d.estado}">${labelEstado(d.estado)}</span>
+      </div>
+      <div class="card-meta">
+        <span>📍 ${esc(d.zona)} · ${esc(d.barrio)}</span>
+        <span>🏷️ ${labelTipo(d.tipo)}</span>
+      </div>
+      <p class="card-desc">${esc(d.descripcion)}</p>
+      <div class="card-footer">
+        <span class="badge badge-prioridad-${d.prioridad}">⚡ ${d.prioridad}</span>
+        <span>${formatFecha(d.fecha_creacion)}</span>
+      </div>
+    `;
+    card.addEventListener('click', () => openModal(d));
+    container.appendChild(card);
+  });
+}
+
+function renderTable(data) {
+  const tbody = document.getElementById('table-body');
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:3rem">Sin resultados</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map(d => `
+    <tr style="cursor:pointer" onclick="openModal(${JSON.stringify(d).replace(/"/g,'&quot;')})">
+      <td style="color:var(--muted)">#${d.id}</td>
+      <td><div class="cell-title">${esc(d.titulo)}</div><div class="cell-sub">${esc(d.barrio)}</div></td>
+      <td>${labelTipo(d.tipo)}</td>
+      <td>${esc(d.zona)}</td>
+      <td><span class="badge badge-estado-${d.estado}">${labelEstado(d.estado)}</span></td>
+      <td><span class="badge badge-prioridad-${d.prioridad}">${d.prioridad}</span></td>
+      <td style="white-space:nowrap">${formatFecha(d.fecha_creacion)}</td>
+    </tr>
+  `).join('');
+}
+
+// ─────────────────────────────────────────
+//  MODAL DETALLE
+// ─────────────────────────────────────────
+function openModal(d) {
+  document.getElementById('modal-title').textContent = d.titulo;
+  const mapsLink = (d.lat && d.lng)
+    ? `<a href="https://www.google.com/maps?q=${d.lat},${d.lng}" target="_blank" rel="noopener">Ver en Google Maps ↗</a>`
+    : 'Coordenadas no disponibles';
+  document.getElementById('modal-body').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem 1.5rem;margin-bottom:1rem">
+      ${mf('ID', '#'+d.id)}
+      ${mf('Estado', `<span class="badge badge-estado-${d.estado}">${labelEstado(d.estado)}</span>`)}
+      ${mf('Tipo', labelTipo(d.tipo))}
+      ${mf('Prioridad', `<span class="badge badge-prioridad-${d.prioridad}">${d.prioridad}</span>`)}
+      ${mf('Zona', d.zona)}
+      ${mf('Barrio', d.barrio)}
+      ${mf('Fecha', formatFecha(d.fecha_creacion))}
+      ${mf('Usuario ID', d.usuario_id)}
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Descripción</div>
+      <div class="modal-value">${esc(d.descripcion)}</div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Ubicación</div>
+      <div class="modal-map">${mapsLink}</div>
+    </div>
+  `;
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+function mf(label, value) {
+  return `<div class="modal-field"><div class="modal-label">${label}</div><div class="modal-value">${value}</div></div>`;
+}
+
+// ─────────────────────────────────────────
+//  LOADING / NOTE
+// ─────────────────────────────────────────
+function showLoading() {
+  document.getElementById('cards-container').innerHTML =
+    `<div class="state-box"><div class="spinner"></div><p>Cargando incidencias…</p></div>`;
+}
+function showApiNote() {
+  const note = document.createElement('div');
+  note.style.cssText = 'margin-bottom:1.25rem;padding:.75rem 1rem;background:rgba(46,201,160,.08);border:1px solid rgba(46,201,160,.25);border-radius:10px;font-size:.78rem;color:#2ec9a0;';
+  note.textContent = '⚠️  API no disponible — mostrando datos de demo. Asegúrate de que el backend PHP esté activo en XAMPP.';
+  document.querySelector('main').insertBefore(note, document.querySelector('.stats-row'));
+  setTimeout(() => note.remove(), 8000);
+}
+
+// ─────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function labelEstado(e) {
+  return { pendiente:'Pendiente', en_proceso:'En proceso', resuelto:'Resuelto', rechazado:'Rechazado' }[e] ?? e;
+}
+function labelTipo(t) {
+  return { hueco:'🕳️ Hueco', luz_danada:'💡 Luz dañada', basura:'🗑️ Basura', otro:'📌 Otro' }[t] ?? t;
+}
+function formatFecha(f) {
+  if (!f) return '—';
+  try {
+    return new Date(f).toLocaleDateString('es-CO', { day:'2-digit', month:'short', year:'numeric' });
+  } catch { return f; }
+}
+
+// ─────────────────────────────────────────
+//  EVENTOS
+// ─────────────────────────────────────────
+['filter-estado','filter-tipo','filter-prioridad','filter-search'].forEach(id => {
+  document.getElementById(id).addEventListener('input', renderAll);
+});
+
+document.getElementById('btn-refresh').addEventListener('click', fetchIncidencias);
+
+// Vista toggle
+function setView(v) {
+  currentView = v;
+  const wrapper = document.getElementById('cards-wrapper');
+  const cardsCont = document.getElementById('cards-container');
+  const tableCont = document.getElementById('table-container');
+
+  document.getElementById('btn-card').classList.toggle('active', v==='card');
+  document.getElementById('btn-list').classList.toggle('active', v==='list');
+  document.getElementById('btn-table').classList.toggle('active', v==='table');
+
+  if (v === 'table') {
+    cardsCont.style.display = 'none';
+    tableCont.style.display = 'block';
+  } else {
+    cardsCont.style.display = 'grid';
+    tableCont.style.display = 'none';
+    cardsCont.className = v === 'list' ? 'list-view' : '';
+    cardsCont.style.gridTemplateColumns = v === 'list' ? '1fr' : '';
+  }
+  renderAll();
+}
+document.getElementById('btn-card').addEventListener('click', ()=>setView('card'));
+document.getElementById('btn-list').addEventListener('click', ()=>setView('list'));
+document.getElementById('btn-table').addEventListener('click', ()=>setView('table'));
+
+// Modal close
+document.getElementById('modal-close').addEventListener('click', () =>
+  document.getElementById('modal-backdrop').classList.remove('open'));
+document.getElementById('modal-backdrop').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-backdrop'))
+    document.getElementById('modal-backdrop').classList.remove('open');
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('modal-backdrop').classList.remove('open');
+});
+
+// ─────────────────────────────────────────
+//  INICIO
+// ─────────────────────────────────────────
+fetchIncidencias();
+</script>
+</body>
+</html>
