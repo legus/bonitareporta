@@ -29,5 +29,45 @@ class incidenciaService {
         ];
     }
 
+    public function listarIncidencias($data){
+        return [
+            "success" => true,
+            "operation" => "select_all",
+            "table" => "incidencias"
+        ];
+    }
+
+    public function actualizarIncidencia($data){
+        if (empty($data["id_incidencia"])){
+            return [
+                "status" => "error",
+                "message" => "El ID es obligatorio"
+            ];
+        }
+
+        return [
+            "success" => true,
+            "operation" => "update",
+            "table" => "incidencias",
+            "id_incidencia" => $data["id_incidencia"],
+            "data_to_update" => $data["update_data"]
+        ];
+    }
+
+    public function eliminarIncidencias($data){
+        if(empty($data["id_incidencia"])){
+            return [
+                "status" => "error",
+                "message" => "El ID es obligatorio"
+            ];
+        }
+
+        return [
+            "success" => true,
+            "operation" => "delete",
+            "table" => "incidencias",
+            "id_incidencia" => $data["id_incidencia"]
+        ];
+    }
 }
 ?>
