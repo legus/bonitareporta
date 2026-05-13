@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BonitaReporta - Editar Incidencia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="editarIncidencias.css">
+<base target="_blank">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="../VerIncidencias/ver_incidencias.html" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                Volver al listado
+            </a>
+            <div class="header-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                </svg>
+            </div>
+            <h1>Editar Incidencia</h1>
+            <p class="subtitle">Modifica los datos del reporte en tiempo real</p>
+        </div>
+
+        <div class="editar-layout">
+            <!-- COLUMNA IZQUIERDA: Formulario de edicion -->
+            <div class="form-column">
+                <div class="form-card">
+                    <h2 class="section-title">Datos del Reporte</h2>
+
+                    <form id="editarForm">
+                        <div class="form-group">
+                            <label for="titulo">Titulo del reporte</label>
+                            <input type="text" id="titulo" name="titulo" required>
+                            <span class="error-msg">Este campo es obligatorio</span>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="tipo">Tipo de incidencia</label>
+                                <select id="tipo" name="tipo" required>
+                                    <option value="Alumbrado">Alumbrado</option>
+                                    <option value="Vialidad">Vialidad</option>
+                                    <option value="Basura">Basura</option>
+                                    <option value="Agua">Agua</option>
+                                    <option value="Seguridad">Seguridad</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="estado">Estado</label>
+                                <select id="estado" name="estado" required>
+                                    <option value="Pendiente">Pendiente</option>
+                                    <option value="En Proceso">En Proceso</option>
+                                    <option value="Resuelto">Resuelto</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="prioridad">Prioridad</label>
+                                <select id="prioridad" name="prioridad" required>
+                                    <option value="Baja">Baja</option>
+                                    <option value="Media">Media</option>
+                                    <option value="Alta">Alta</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciudad">Ciudad</label>
+                                <select id="ciudad" name="ciudad" required>
+                                    <option value="Bucaramanga">Bucaramanga</option>
+                                    <option value="Floridablanca">Floridablanca</option>
+                                    <option value="Giron">Giron</option>
+                                    <option value="Piedecuesta">Piedecuesta</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="barrio">Barrio</label>
+                                <input type="text" id="barrio" name="barrio" required>
+                                <span class="error-msg">Ingresa el barrio</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="usuario_id">ID de Usuario</label>
+                                <input type="number" id="usuario_id" name="usuario_id" readonly>
+                                <span class="hint">No editable</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="direccion">Direccion exacta</label>
+                            <input type="text" id="direccion" name="direccion" required>
+                            <span class="error-msg">Ingresa una direccion valida</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="descripcion">Descripcion del problema</label>
+                            <textarea id="descripcion" name="descripcion" required></textarea>
+                            <span class="error-msg">La descripcion es obligatoria</span>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancelar" id="btnCancelar">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-guardar" id="btnGuardar">
+                                <span class="btn-text">Guardar Cambios</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                                <div class="spinner"></div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: Vista previa en tiempo real -->
+            <div class="preview-column">
+                <div class="preview-card">
+                    <div class="preview-header">
+                        <h2 class="section-title">Vista Previa</h2>
+                        <span class="live-badge">
+                            <span class="live-dot"></span>
+                            En vivo
+                        </span>
+                    </div>
+
+                    <div class="preview-content">
+                        <div class="preview-id-section">
+                            <span class="preview-label">ID Incidencia</span>
+                            <span class="preview-id" id="previewId">#501</span>
+                        </div>
+
+                        <div class="preview-badges">
+                            <span class="preview-badge-estado" id="previewEstado">Pendiente</span>
+                            <span class="preview-badge-prioridad" id="previewPrioridad">Media</span>
+                        </div>
+
+                        <div class="preview-divider"></div>
+
+                        <div class="preview-field">
+                            <span class="preview-label">Titulo</span>
+                            <span class="preview-valor" id="previewTitulo">Falla de Alumbrado</span>
+                        </div>
+
+                        <div class="preview-field">
+                            <span class="preview-label">Tipo</span>
+                            <span class="preview-valor">
+                                <span class="preview-tag" id="previewTipo">Alumbrado</span>
+                            </span>
+                        </div>
+
+                        <div class="preview-row">
+                            <div class="preview-field">
+                                <span class="preview-label">Ciudad</span>
+                                <span class="preview-valor" id="previewCiudad">Bucaramanga</span>
+                            </div>
+                            <div class="preview-field">
+                                <span class="preview-label">Barrio</span>
+                                <span class="preview-valor" id="previewBarrio">La Esperanza</span>
+                            </div>
+                        </div>
+
+                        <div class="preview-field">
+                            <span class="preview-label">Direccion</span>
+                            <span class="preview-valor direccion" id="previewDireccion">Carrera 27 # 45-12, cerca al parque principal</span>
+                        </div>
+
+                        <div class="preview-field">
+                            <span class="preview-label">Descripcion</span>
+                            <p class="preview-descripcion" id="previewDescripcion">Poste parpadea toda la noche...</p>
+                        </div>
+
+                        <div class="preview-divider"></div>
+
+                        <div class="preview-meta">
+                            <span>Usuario #<span id="previewUsuario">12</span></span>
+                            <span id="previewFecha">12 may 2026</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicador de cambios -->
+                <div class="cambios-indicator" id="cambiosIndicator">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                    <span>Hay cambios sin guardar</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmacion -->
+    <div class="modal-overlay" id="modalConfirmar">
+        <div class="modal-card">
+            <div class="modal-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <h3>Confirmar Cambios</h3>
+            <p>Estas a punto de guardar los cambios en la incidencia <strong id="confirmarId">#501</strong>. Revisa la vista previa antes de continuar.</p>
+
+            <div class="resumen-cambios" id="resumenCambios">
+                <!-- Se llena dinamicamente con los cambios realizados -->
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancelar" id="btnCancelarModal">Seguir Editando</button>
+                <button class="btn-modal btn-confirmar" id="btnConfirmarGuardar">
+                    <span class="btn-text">Confirmar y Guardar</span>
+                    <div class="spinner-modal"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="editarIncidencias.js"></script>
+</body>
+</html>

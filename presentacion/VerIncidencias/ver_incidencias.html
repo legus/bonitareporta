@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BonitaReporta - Listado de Incidencias</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="ver_incidencias.css">
+<base target="_blank">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="../index.html" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                Volver al inicio
+            </a>
+            <div class="header-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                </svg>
+            </div>
+            <h1>Listado de Incidencias</h1>
+            <p class="subtitle">Todas las reportes ciudadanos registrados</p>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filtros-bar">
+            <div class="filtro-grupo">
+                <label for="filtroCiudad">Ciudad</label>
+                <select id="filtroCiudad">
+                    <option value="">Todas</option>
+                    <option value="Bucaramanga">Bucaramanga</option>
+                    <option value="Floridablanca">Floridablanca</option>
+                    <option value="Giron">Giron</option>
+                    <option value="Piedecuesta">Piedecuesta</option>
+                </select>
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtroEstado">Estado</label>
+                <select id="filtroEstado">
+                    <option value="">Todos</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En Proceso">En Proceso</option>
+                    <option value="Resuelto">Resuelto</option>
+                </select>
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtroTipo">Tipo</label>
+                <select id="filtroTipo">
+                    <option value="">Todos</option>
+                    <option value="Alumbrado">Alumbrado</option>
+                    <option value="Vialidad">Vialidad</option>
+                    <option value="Basura">Basura</option>
+                    <option value="Agua">Agua</option>
+                    <option value="Seguridad">Seguridad</option>
+                </select>
+            </div>
+            <button class="btn-nuevo" id="btnNuevaIncidencia">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Nueva Incidencia
+            </button>
+        </div>
+
+        <!-- Contador -->
+        <div class="contador-resultados">
+            <span id="contadorTexto">Mostrando 5 incidencias</span>
+        </div>
+
+        <!-- Listado de incidencias -->
+        <div class="listado" id="listadoIncidencias">
+            <!-- Las incidencias se generan dinamicamente desde JS -->
+        </div>
+    </div>
+
+    <!-- Modal de confirmacion para eliminar -->
+    <div class="modal-overlay" id="modalEliminar">
+        <div class="modal-card">
+            <div class="modal-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+            </div>
+            <h3>Eliminar Incidencia</h3>
+            <p>Estas seguro de que deseas eliminar la incidencia <strong id="modalIdIncidencia">#501</strong>? Esta accion no se puede deshacer.</p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancelar" id="btnCancelarEliminar">Cancelar</button>
+                <button class="btn-modal btn-confirmar-eliminar" id="btnConfirmarEliminar">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmacion para editar -->
+    <div class="modal-overlay" id="modalEditar">
+        <div class="modal-card">
+            <div class="modal-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                </svg>
+            </div>
+            <h3>Editar Incidencia</h3>
+            <p>Estas seguro de que deseas editar la incidencia <strong id="modalEditarId">#501</strong>? Seras redirigido a la pagina de edicion.</p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancelar" id="btnCancelarEditar">Cancelar</button>
+                <button class="btn-modal btn-confirmar-editar" id="btnConfirmarEditar">Editar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="ver_incidencias.js"></script>
+</body>
+</html>
