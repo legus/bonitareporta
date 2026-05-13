@@ -37,10 +37,20 @@ presentacion/
 │   ├── crear.css
 │   └── crear.js
 │
-├── Reporte/
-│   ├── reporte.html
-│   ├── reporte.css
-│   └── reporte.js
+├── formulario/
+│   ├── formulario.html
+│   ├── formulario.css
+│   └── formulario.js
+│
+├── VerIncidencias/
+│   ├── ver_incidencias.html
+│   ├── ver_incidencias.css
+│   └── ver_incidencias.js
+│
+├── editarIncidencias/
+│   ├── editarIncidencias.html
+│   ├── editarIncidencias.css
+│   └── editarIncidencias.js
 │
 ├── index.html
 ├── index.css
