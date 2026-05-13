@@ -3,9 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BonitaReporta</title>
+    <title>BonitaReporta — Sistema de Incidencias Urbanas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    
+
+    <!-- ===== NAVEGACIÓN ===== -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <span class="nav-dot"></span>
+                BonitaReporta
+            </a>
+            <div class="nav-links">
+                <a href="#funciona">¿Cómo funciona?</a>
+                <a href="visualizacion.html">Visualización</a>
+                <a href="inicioSesion/inicio.html" class="btn-nav">Iniciar sesión</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Mejoremos <span>Bucaramanga</span> juntos</h1>
+            <p>Reporta incidencias urbanas de forma rápida y sencilla. Huecos en las vías, luminarias dañadas, basuras acumuladas y más. Tu voz cuenta para construir una ciudad mejor.</p>
+            <div class="hero-buttons">
+                <a href="crearCuenta/crear.html" class="btn-primary">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+                    </svg>
+                    Crear cuenta
+                </a>
+            </div>
+        </div>
+
+            <div class="hero-card">
+        
+                <div class="hero-card-actions">
+                    <a href="formulario/formulario.html" class="btn-primary">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                        </svg>
+                        Reportar
+                    </a>
+                    <a href="VerIncidencias/ver_incidencias.html" class="btn-secondary">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        Ver incidencias
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ESTADÍSTICAS ===== -->
+    <section class="stats">
+        <div class="stats-container">
+            <div class="stat-item">
+                <h3>2,847</h3>
+                <p>Reportes ciudadanos</p>
+            </div>
+            <div class="stat-item">
+                <h3>89%</h3>
+                <p>Tasa de resolución</p>
+            </div>
+            <div class="stat-item">
+                <h3>6</h3>
+                <p>Ciudades cubiertas</p>
+            </div>
+            <div class="stat-item">
+                <h3>24h</h3>
+                <p>Tiempo respuesta promedio</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CARACTERÍSTICAS ===== -->
+    <section class="features">
+        <div class="section-header">
+            <h2>¿Por qué usar BonitaReporta?</h2>
+            <p>Hemos diseñado una plataforma pensada en la ciudadanía y en las necesidades reales de Bucaramanga y su área metropolitana.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+                    </svg>
+                </div>
+                <h3>Ubicación precisa</h3>
+                <p>Georreferencia automática de cada reporte para que las autoridades locales sepan exactamente dónde atender la incidencia.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"/>
+                    </svg>
+                </div>
+                <h3>Evidencia fotográfica</h3>
+                <p>Adjunta fotografías de la incidencia para una mejor comprensión del problema y seguimiento visual de la solución.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
+                    </svg>
+                </div>
+                <h3>Seguimiento en tiempo real</h3>
+                <p>Consulta el estado de tus reportes: pendiente, en proceso o resuelto. Transparencia total en la gestión.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3>Categorización inteligente</h3>
+                <p>Clasificación automática por tipo de incidencia para una derivación eficiente a la dependencia correspondiente.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
+                    </svg>
+                </div>
+                <h3>Comunidad activa</h3>
+                <p>Únete a miles de ciudadanos comprometidos con el mejoramiento de Bucaramanga, Floridablanca, Girón y Piedecuesta.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+                    </svg>
+                </div>
+                <h3>Plataforma segura</h3>
+                <p>Tus datos están protegidos. Verificación de identidad para garantizar reportes responsables y constructivos.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CÓMO FUNCIONA ===== -->
+    <section class="how-it-works" id="funciona">
+        <div class="how-container">
+            <div class="section-header">
+                <h2>¿Cómo funciona?</h2>
+                <p>En cuatro simples pasos puedes reportar cualquier incidencia en tu ciudad.</p>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>Inicia sesión</h4>
+                    <p>Accede con tu cuenta o regístrate en menos de un minuto.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>Describe el problema</h4>
+                    <p>Selecciona la categoría, ubicación y describe la incidencia.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>Adjunta evidencia</h4>
+                    <p>Sube fotografías para una mejor comprensión del reporte.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4>Recibe seguimiento</h4>
+                    <p>Consulta el estado de tu reporte en tiempo real.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TIPOS DE INCIDENCIAS ===== -->
+    <section class="incidencias" id="incidencias">
+        <div class="section-header">
+            <h2>Tipos de incidencias</h2>
+            <p>Reporta cualquiera de estas problemáticas urbanas comunes en nuestra ciudad.</p>
+        </div>
+
+        <div class="incidencias-grid">
+            <div class="incidencia-card">
+                <div class="incidencia-icon" style="background: #fef3c7;">🕳️</div>
+                <div class="incidencia-info">
+                    <h4>Vialidad</h4>
+                    <p>Huecos, grietas, señalización dañada</p>
+                </div>
+            </div>
+
+            <div class="incidencia-card">
+                <div class="incidencia-icon" style="background: #e0e7ff;">💡</div>
+                <div class="incidencia-info">
+                    <h4>Alumbrado público</h4>
+                    <p>Luminarias dañadas, postes caídos</p>
+                </div>
+            </div>
+
+            <div class="incidencia-card">
+                <div class="incidencia-icon" style="background: #dbeafe;">🗑️</div>
+                <div class="incidencia-info">
+                    <h4>Acumulación de basura</h4>
+                    <p>Escombros, residuos en vías públicas</p>
+                </div>
+            </div>
+
+            <div class="incidencia-card">
+                <div class="incidencia-icon" style="background: #fce7f3;">🚦</div>
+                <div class="incidencia-info">
+                    <h4>Semáforos</h4>
+                    <p>Averías, tiempos incorrectos</p>
+                </div>
+            </div>
+
+            <div class="incidencia-card">
+                <div class="incidencia-icon" style="background: #d1fae5;">💧</div>
+                <div class="incidencia-info">
+                    <h4>Agua y alcantarillado</h4>
+                    <p>Fugas, obstrucciones, olores</p>
+                </div>
+            </div>
+
+            <div class="incidencia-card">
+                <div class="incidencia-icon" style="background: #f3e8ff;">🌳</div>
+                <div class="incidencia-info">
+                    <h4>Espacios públicos</h4>
+                    <p>Parques, aceras, zonas verdes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="cta">
+        <div class="cta-card">
+            <h2>¿Viste algo que necesita atención?</h2>
+            <p>No esperes a que otro lo reporte. Sé parte del cambio y ayuda a mejorar Bucaramanga y su área metropolitana.</p>
+            <a href="formulario/formulario.html" class="btn-white">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                </svg>
+                Crear reporte ahora
+            </a>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <div class="footer-container">
+            <div>
+                <div class="footer-brand">
+                    <span class="nav-dot"></span>
+                    BonitaReporta
+                </div>
+                <p class="footer-desc">
+                    Sistema de incidencias urbanas para Bucaramanga y su área metropolitana. Conectando ciudadanos con autoridades para una ciudad mejor.
+                </p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Plataforma</h4>
+                <a href="formulario/formulario.html">Reportar incidencia</a>
+                <a href="visualizacion/visualizacion.html">Visualizar reportes</a>
+                <a href="inicioSesion/inicio.html">Iniciar sesión</a>
+                <a href="crearCuenta/crear.html">Crear cuenta</a>
+            </div>
+
+            <div class="footer-col">
+                <h4>Cobertura</h4>
+                <a>Bucaramanga</a>
+                <a>Floridablanca</a>
+                <a>Girón</a>
+                <a>Piedecuesta</a>
+            </div>
+
+            <div class="footer-col">
+                <h4>Ayuda</h4>
+                <a href="#">Preguntas frecuentes</a>
+                <a href="#">Contacto</a>
+                <a href="#">Términos de uso</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            © 2026 BonitaReporta. Todos los derechos reservados. Bucaramanga, Colombia.
+        </div>
+    </footer>
+
+    <script src="index.js"></script>
 </body>
 </html>
