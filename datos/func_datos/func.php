@@ -11,7 +11,7 @@ function insertarIncidencia($data) {
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param(
-        "sssssiddss s",
+        "sssssiddsss",
         $data['titulo'],
         $data['tipo'],
         $data['descripcion'],
