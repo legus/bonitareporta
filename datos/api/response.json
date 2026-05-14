@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "insert_id": ,
+  "affected_rows": ,
+  "error": null
+}
+{
+  "success": false,
+  "insert_id": null,
+  "affected_rows": 0,
+  "error": ""
+}
