@@ -1,4 +1,15 @@
-const K1=[
+
+ // Reemplazar datos dummy por fetch cuando el API esté listo
+// fetch('http://localhost:[puerto]/logica/controllers/IncidenciaController.php', {
+//   method: 'POST',
+//   body: JSON.stringify({ "operation": "SELECT", "table": "incidencias" })
+// })
+// .then(res => res.json())
+// .then(res => { /* poblar K1, K2, K4, K5 con res.data */ });
+
+// Datos dummy actuales---
+
+  const K1=[
   {tipo:'Hueco',a:6,p:3},{tipo:'Luz dañada',a:4,p:2},{tipo:'Basura',a:3,p:3},{tipo:'Otro',a:2,p:1},
 ];
 const K2=[
