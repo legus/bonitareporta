@@ -1,32 +1,16 @@
 <?php
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "bonitareporta";
 
+$conn = new mysqli($host, $user, $password, $database);
 
-function getConnection() {
-    // Parámetros de conexión
-    $host = "localhost";
-    $db   = "bonitareporta";
-    $user = "root";
-    $pass = ""; // Reemplazar con contraseña segura
-    $charset = "utf8mb4";
-
-    // DSN para PDO
-    $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
-
-    // Opciones de PDO
-    $options = [
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // Manejo de errores con excepciones
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,       // Resultados como arrays asociativos
-        PDO::ATTR_EMULATE_PREPARES   => false,                  // Prepared statements reales
-    ];
-
-    try {
-        // Crear conexión PDO
-        $pdo = new PDO($dsn, $user, $pass, $options);
-        return $pdo;
-    } catch (PDOException $e) {
-        // Registrar error en log y devolver null
-        error_log("Error de conexión: " . $e->getMessage());
-        return null;
-    }
+if ($conn->connect_error) {
+    die(json_encode([
+        "success" => false,
+        "error" => "Error de conexión: " . $conn->connect_error
+    ]));
 }
-?>
+$conn->set_charset("utf8mb4");
+?> 
