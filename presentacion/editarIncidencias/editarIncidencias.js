@@ -1,10 +1,14 @@
 // ============================================================
 // EDITAR INCIDENCIA - BonitaReporta
-// Capa de Presentacion | CRUD - Editar
-// Edicion en tiempo real + Vista previa + Confirmacion
+// Capa de Presentación | CRUD - Editar
+// Conexión con API Dummy (Pruebas)
 // ============================================================
 
-// --- Datos de la incidencia a editar (simulando respuesta de API) ---
+// --- CONFIGURACIÓN DEL API ---
+// Ruta absoluta para evitar problemas con carpetas duplicadas
+var API_URL = '/BonitaReporta/logica/api/editar_incidencia.php';
+
+// --- Datos de la incidencia (simulando respuesta previa del API) ---
 var incidenciaOriginal = {
   id: 501,
   titulo: 'Falla de Alumbrado',
@@ -19,7 +23,6 @@ var incidenciaOriginal = {
   prioridad: 'Media'
 };
 
-// Copia para trabajar
 var incidenciaActual = JSON.parse(JSON.stringify(incidenciaOriginal));
 var hayCambios = false;
 
@@ -55,7 +58,7 @@ var cambiosIndicator = document.getElementById('cambiosIndicator');
 var modalConfirmar = document.getElementById('modalConfirmar');
 var resumenCambios = document.getElementById('resumenCambios');
 
-// --- Inicializar formulario con datos ---
+// --- Inicializar formulario ---
 function inicializarFormulario() {
   inputs.titulo.value = incidenciaActual.titulo;
   inputs.tipo.value = incidenciaActual.tipo;
@@ -70,7 +73,7 @@ function inicializarFormulario() {
   actualizarVistaPrevia();
 }
 
-// --- Actualizar vista previa en tiempo real ---
+// --- Actualizar vista previa ---
 function actualizarVistaPrevia() {
   preview.id.textContent = '#' + incidenciaActual.id;
   preview.titulo.textContent = incidenciaActual.titulo || 'Sin titulo';
@@ -83,11 +86,9 @@ function actualizarVistaPrevia() {
   preview.usuario.textContent = incidenciaActual.usuario_id;
   preview.fecha.textContent = incidenciaActual.fecha;
 
-  // Estado
   preview.estado.textContent = incidenciaActual.estado;
   preview.estado.className = 'preview-badge-estado ' + incidenciaActual.estado.toLowerCase().replace(/\s+/g, '-');
 
-  // Prioridad
   preview.prioridad.textContent = incidenciaActual.prioridad;
   preview.prioridad.className = 'preview-badge-prioridad ' + incidenciaActual.prioridad.toLowerCase();
 }
@@ -110,21 +111,15 @@ function detectarCambios() {
   return cambios;
 }
 
-// --- Mostrar/ocultar indicador de cambios ---
 function actualizarIndicadorCambios() {
   var cambios = detectarCambios();
   hayCambios = cambios.length > 0;
-
-  if (hayCambios) {
-    cambiosIndicator.classList.add('visible');
-  } else {
-    cambiosIndicator.classList.remove('visible');
-  }
+  cambiosIndicator.classList.toggle('visible', hayCambios);
 }
 
-// --- Event listeners para cada input (edicion en tiempo real) ---
+// --- Event listeners ---
 Object.keys(inputs).forEach(function(key) {
-  if (key === 'usuario_id') return; // No editable
+  if (key === 'usuario_id') return;
 
   inputs[key].addEventListener('input', function() {
     incidenciaActual[key] = this.value;
@@ -139,7 +134,7 @@ Object.keys(inputs).forEach(function(key) {
   });
 });
 
-// --- Validacion ---
+// --- Validación ---
 function validarFormulario() {
   var valido = true;
   var camposRequeridos = ['titulo', 'tipo', 'estado', 'prioridad', 'ciudad', 'barrio', 'direccion', 'descripcion'];
@@ -157,14 +152,13 @@ function validarFormulario() {
   return valido;
 }
 
-// Limpiar error al escribir
 Object.keys(inputs).forEach(function(key) {
   inputs[key].addEventListener('input', function() {
     this.closest('.form-group').classList.remove('error');
   });
 });
 
-// --- Generar resumen de cambios para el modal ---
+// --- Generar resumen ---
 function generarResumenCambios() {
   var cambios = detectarCambios();
   var html = '<h4>Cambios realizados</h4>';
@@ -193,7 +187,9 @@ function truncar(str, max) {
   return str.substring(0, max) + '...';
 }
 
-// --- Submit del formulario ---
+// ============================================================
+// SUBMIT: Enviar datos al API Dummy vía fetch()
+// ============================================================
 form.addEventListener('submit', function(e) {
   e.preventDefault();
 
@@ -204,13 +200,12 @@ form.addEventListener('submit', function(e) {
     return;
   }
 
-  // Mostrar modal de confirmacion
   document.getElementById('confirmarId').textContent = '#' + incidenciaActual.id;
   generarResumenCambios();
   modalConfirmar.classList.add('active');
 });
 
-// --- Cancelar edicion ---
+// --- Cancelar edición ---
 document.getElementById('btnCancelar').addEventListener('click', function() {
   if (hayCambios) {
     var confirmar = window.confirm('Tienes cambios sin guardar. ¿Seguro que deseas salir?');
@@ -230,29 +225,98 @@ modalConfirmar.addEventListener('click', function(e) {
   }
 });
 
-// --- Modal: Confirmar y guardar ---
+// ============================================================
+// FUNCIÓN HELPER
+// ============================================================
+function manejarRespuesta(response) {
+  console.log("[PRUEBA] Status HTTP:", response.status);
+
+  return response.text().then(function(textoCrudo) {
+    console.log("[PRUEBA] Respuesta cruda:", textoCrudo.substring(0, 500));
+    try {
+      var data = JSON.parse(textoCrudo);
+      console.log("[PRUEBA] Respuesta parseada:", data);
+      if (!response.ok) {
+        console.warn("[PRUEBA] ⚠️ Error HTTP:", response.status, "-", data.mensaje);
+      }
+      return data;
+    } catch (e) {
+      console.error("[PRUEBA] ❌ No es JSON válido");
+      return { exito: false, mensaje: "Error servidor: " + response.status };
+    }
+  });
+}
+
+// ============================================================
+// CONFIRMAR GUARDAR: Enviar al API Dummy
+// ============================================================
 document.getElementById('btnConfirmarGuardar').addEventListener('click', function() {
   var btn = this;
   btn.classList.add('loading');
 
-  // Simular guardado en API
-  setTimeout(function() {
-    // Actualizar datos originales
-    incidenciaOriginal = JSON.parse(JSON.stringify(incidenciaActual));
-    hayCambios = false;
+  // ============================================================
+  // CONSTRUIR CONTRATO JSON SEGÚN GUÍA DE INTEGRACIÓN
+  // ============================================================
+  var contratoJSON = {
+    accion: "editar_incidencia",
+    datos: {
+      incidencia_id: incidenciaActual.id,
+      titulo: incidenciaActual.titulo,
+      tipo: incidenciaActual.tipo,
+      estado: incidenciaActual.estado,
+      prioridad: incidenciaActual.prioridad,
+      ciudad: incidenciaActual.ciudad,
+      barrio: incidenciaActual.barrio,
+      direccion: incidenciaActual.direccion,
+      descripcion: incidenciaActual.descripcion
+    }
+  };
 
-    // Ocultar modal y resetear
-    modalConfirmar.classList.remove('active');
+  console.log("[PRUEBA] =========================================");
+  console.log("[PRUEBA] Enviando a:", API_URL);
+  console.log("[PRUEBA] Payload:", JSON.stringify(contratoJSON, null, 2));
+  console.log("[PRUEBA] =========================================");
+
+  // ============================================================
+  // FETCH: Envío HTTP POST con JSON al Dummy PHP
+  // ============================================================
+  fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(contratoJSON)
+  })
+  .then(manejarRespuesta)
+  .then(function(respuesta) {
+    console.log("[PRUEBA] exito:", respuesta.exito, "| mensaje:", respuesta.mensaje);
+
+    if (respuesta.exito === true) {
+      // ÉXITO
+      incidenciaOriginal = JSON.parse(JSON.stringify(incidenciaActual));
+      hayCambios = false;
+
+      modalConfirmar.classList.remove('active');
+      btn.classList.remove('loading');
+      cambiosIndicator.classList.remove('visible');
+
+      mostrarToast('Incidencia #' + incidenciaActual.id + ' actualizada correctamente', false);
+
+      setTimeout(function() {
+        window.location.href = '../VerIncidencias/ver_incidencias.html';
+      }, 1500);
+    } else {
+      // FALLIDO
+      throw new Error(respuesta.mensaje || 'Error al actualizar');
+    }
+  })
+  .catch(function(error) {
+    console.error("[PRUEBA] Error:", error);
     btn.classList.remove('loading');
-    cambiosIndicator.classList.remove('visible');
-
-    mostrarToast('Incidencia #' + incidenciaActual.id + ' actualizada correctamente', false);
-
-    // Redirigir despues de un momento
-    setTimeout(function() {
-      window.location.href = '../VerIncidencias/ver_incidencias.html';
-    }, 1500);
-  }, 1200);
+    modalConfirmar.classList.remove('active');
+    mostrarToast('Error de conexión: ' + error.message, true);
+  });
 });
 
 // --- Toast ---
@@ -264,7 +328,7 @@ function mostrarToast(msg, esError) {
   setTimeout(function() { t.classList.remove('show'); }, 3000);
 }
 
-// --- Inicializar al cargar ---
+// --- Inicializar ---
 document.addEventListener('DOMContentLoaded', function() {
   inicializarFormulario();
 });

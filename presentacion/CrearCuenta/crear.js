@@ -1,3 +1,12 @@
+// ============================================================
+// CREAR CUENTA - BonitaReporta
+// Capa de Presentación | Conexión con API Dummy (Pruebas)
+// ============================================================
+
+// --- CONFIGURACIÓN DEL API ---
+// Ruta absoluta para evitar problemas con carpetas duplicadas
+var API_URL = '/BonitaReporta/logica/api/registro_usuario.php';
+
 // --- Muestra una notificación flotante ---
 function mostrarToast(msg, esError) {
   var t = document.getElementById('toast');
@@ -7,7 +16,7 @@ function mostrarToast(msg, esError) {
   setTimeout(function() { t.classList.remove('show'); }, 3000);
 }
 
-// --- Muestra u oculta el error visual de un campo ---
+// --- Muestra u oculta el error visual ---
 function manejarError(idInput, idError, mostrar) {
   document.getElementById(idInput).classList.toggle('invalid', mostrar);
   document.getElementById(idError).classList.toggle('visible', mostrar);
@@ -18,19 +27,16 @@ function manejarError(idInput, idError, mostrar) {
   var el = document.getElementById(id);
   if (el) {
     el.addEventListener('input', function() {
-      // Oculta el error específico de este campo
       var errorId = id + 'Error';
       if (id === 'password') errorId = 'passError';
       if (id === 'confirmPassword') errorId = 'confirmError';
       manejarError(id, errorId, false);
-
-      // Si es contraseña, actualiza requisitos visuales
       if (id === 'password') validarRequisitosVisuales(this.value);
     });
   }
 });
 
-// --- Validación visual de requisitos de contraseña ---
+// --- Validación visual de contraseña ---
 function validarRequisitosVisuales(pass) {
   document.getElementById('reqLen').classList.toggle('valid', pass.length >= 6);
   document.getElementById('reqNum').classList.toggle('valid', /\d/.test(pass));
@@ -53,17 +59,43 @@ document.getElementById('toggleConfirmPass').addEventListener('click', function(
   togglePass('confirmPassword', 'textoOjoConfirm');
 });
 
-// --- Validar email ---
 function emailValido(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-// --- Validar contraseña ---
 function passValida(pass) {
   return pass.length >= 6 && /\d/.test(pass) && /[A-Z]/.test(pass);
 }
 
-// --- Lógica principal: Crear cuenta ---
+// ============================================================
+// FUNCIÓN HELPER: Manejar respuesta del fetch
+// ============================================================
+function manejarRespuesta(response) {
+  console.log("[PRUEBA] Status HTTP:", response.status, response.statusText);
+
+  return response.text().then(function(textoCrudo) {
+    console.log("[PRUEBA] Respuesta cruda:", textoCrudo.substring(0, 500));
+
+    try {
+      var data = JSON.parse(textoCrudo);
+      console.log("[PRUEBA] Respuesta parseada:", data);
+      if (!response.ok) {
+        console.warn("[PRUEBA] ⚠️ Error HTTP:", response.status, "-", data.mensaje);
+      }
+      return data;
+    } catch (e) {
+      console.error("[PRUEBA] ❌ No es JSON válido:", textoCrudo.substring(0, 200));
+      return { 
+        exito: false, 
+        mensaje: "Respuesta no válida del servidor (status: " + response.status + ")" 
+      };
+    }
+  });
+}
+
+// ============================================================
+// LÓGICA PRINCIPAL: Enviar datos al API Dummy vía fetch()
+// ============================================================
 document.getElementById('btnCrear').addEventListener('click', function() {
   var nombre   = document.getElementById('nombre').value.trim();
   var apellido = document.getElementById('apellido').value.trim();
@@ -71,7 +103,7 @@ document.getElementById('btnCrear').addEventListener('click', function() {
   var pass     = document.getElementById('password').value;
   var confirm  = document.getElementById('confirmPassword').value;
 
-  // Validaciones individuales
+  // Validaciones locales
   var nombreOk   = nombre.length > 0;
   var apellidoOk = apellido.length > 0;
   var emailOk    = emailValido(email);
@@ -94,39 +126,60 @@ document.getElementById('btnCrear').addEventListener('click', function() {
   btn.disabled = true;
   btn.innerHTML = '<span class="loader"></span> Creando cuenta...';
 
-  setTimeout(function() {
-    // Lee usuarios existentes
-    var usuarios = JSON.parse(localStorage.getItem('br_usuarios') || '[]');
+  // ============================================================
+  // CONSTRUIR CONTRATO JSON SEGÚN GUÍA DE INTEGRACIÓN
+  // ============================================================
+  var contratoJSON = {
+    accion: "registro_usuario",
+    datos: {
+      nombre: nombre,
+      apellido: apellido,
+      email: email,
+      password: pass
+    }
+  };
 
-    // Verifica si el correo ya está registrado
-    var existe = usuarios.some(function(u) { return u.email === email; });
-    if (existe) {
-      mostrarToast('Este correo ya está registrado. Inicia sesión.', true);
+  console.log("[PRUEBA] =========================================");
+  console.log("[PRUEBA] Enviando a:", API_URL);
+  console.log("[PRUEBA] Payload:", JSON.stringify(contratoJSON, null, 2));
+  console.log("[PRUEBA] =========================================");
+
+  // ============================================================
+  // FETCH: Envío HTTP POST con JSON al Dummy PHP
+  // ============================================================
+  fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(contratoJSON)
+  })
+  .then(manejarRespuesta)
+  .then(function(respuesta) {
+    console.log("[PRUEBA] exito:", respuesta.exito, "| mensaje:", respuesta.mensaje);
+
+    if (respuesta.exito === true) {
+      // ÉXITO: Limpiar formulario y mostrar mensaje de confirmación
+      mostrarToast('¡Cuenta creada! ID: ' + respuesta.datos.usuario_id, false);
+
+      setTimeout(function() {
+        // Redirige al inicio de sesión
+        window.location.href = '../InicioSesion/inicio.html';
+      }, 1500);
+    } else {
+      // FALLIDO: Notificar al ciudadano que el registro no pudo guardarse
+      mostrarToast(respuesta.mensaje || 'No se pudo crear la cuenta.', true);
       btn.disabled = false;
       btn.textContent = 'Crear cuenta';
-      return;
     }
-
-    // Crea nuevo usuario
-    var nuevoUsuario = {
-      nombre: nombre + ' ' + apellido,
-      email: email,
-      password: pass,
-      fecha: new Date().toISOString()
-    };
-
-    usuarios.push(nuevoUsuario);
-    localStorage.setItem('br_usuarios', JSON.stringify(usuarios));
-
-    // Éxito
-    mostrarToast('¡Cuenta creada exitosamente!', false);
-
-    setTimeout(function() {
-      // Redirige al inicio de sesión
-      window.location.href = '../InicioSesion/inicio.html';
-    }, 1500);
-
-  }, 1200);
+  })
+  .catch(function(error) {
+    console.error("[PRUEBA] ERROR DE RED:", error);
+    mostrarToast('Error de conexión. Verifica XAMPP.', true);
+    btn.disabled = false;
+    btn.textContent = 'Crear cuenta';
+  });
 });
 
 // --- Botón Google (futuro) ---
