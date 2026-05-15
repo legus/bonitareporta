@@ -64,24 +64,92 @@ presentacion/
 
 La aplicación se comunica con la capa de lógica mediante solicitudes HTTP utilizando `fetch()`.
 
-### Ejemplo: Crear reporte
 
+### contrato KPI 1
 ```json
 {
-  "titulo": "Falla de Alumbrado",
-  "tipo": "Alumbrado",
-  "descripcion": "No funcionan las luces",
-  "zona": "Centro",
-  "barrio": "La Esperanza",
-  "direccion": "Cra 15 #45-32",
-  "usuario_id": 12
+  "operation": "SELECT",
+  "table": "incidencias",
+  "fields": ["tipo_incidencia", "estado", "COUNT(*) AS conteo"],
+  "where": {
+    "condition": "estado IN (?, ?)",
+    "params": ["abierto", "en_proceso"]
+  },
+  "order_by": "tipo_incidencia ASC"
+}
+```
+### contrato KPI 2
+```json
+{
+  "operation": "SELECT",
+  "table": "incidencias",
+  "fields": [
+    "tipo_incidencia",
+    "AVG(TIMESTAMPDIFF(HOUR, fecha_reporte, fecha_cierre)) AS promedio_horas"
+  ],
+  "where": {
+    "condition": "estado = ? AND fecha_cierre IS NOT NULL AND fecha_reporte >= ?",
+    "params": ["resuelto", "FECHA_HACE_30_DIAS"]
+  },
+  "order_by": "tipo_incidencia ASC"
 }
 ```
 
-### Ejemplo: Inicio de sesión
+### contrato KPI3 (2 QUERIES)
+```json
+{
+  "operation": "SELECT",
+  "table": "incidencias",
+  "fields": ["COUNT(*) AS total_reportadas"],
+  "where": {
+    "condition": "fecha_reporte >= ?",
+    "params": ["FECHA_HACE_7_DIAS"]
+  }
+}
+```
 
 ```json
 {
-  "email": "usuario@correo.com",
-  "password": "123456"
+  "operation": "SELECT",
+  "table": "incidencias",
+  "fields": ["COUNT(*) AS total_resueltas"],
+  "where": {
+    "condition": "estado = ? AND fecha_reporte >= ?",
+    "params": ["resuelto", "FECHA_HACE_7_DIAS"]
+  }
 }
+```
+### contrato KPI 4
+```json
+{
+  "operation": "SELECT",
+  "table": "incidencias",
+  "fields": [
+    "ciudad_zona",
+    "barrio",
+    "COUNT(*) AS conteo"
+  ],
+  "where": {
+    "condition": "estado NOT IN (?, ?) AND fecha_reporte >= ?",
+    "params": ["resuelto", "cerrado", "FECHA_HACE_30_DIAS"]
+  },
+  "order_by": "conteo DESC, ciudad_zona ASC",
+  "limit": [0, 10]
+}
+```
+### contrato Kpi 5
+```json
+{
+  "operation": "SELECT",
+  "table": "incidencias",
+  "fields": [
+    "tipo_incidencia",
+    "COUNT(*) AS conteo"
+  ],
+  "where": {
+    "condition": "fecha_reporte >= ?",
+    "params": ["FECHA_HACE_30_DIAS"]
+  },
+  "order_by": "conteo DESC"
+}
+```
