@@ -1,60 +1,66 @@
 # BonitaReporta - Capa de Datos
 
-Rama: `feature/datos`
+Rama de trabajo: `feature/datos`
 
-Esta es la capa de datos del proyecto BonitaReporta. Se encarga de recibir solicitudes en formato JSON, procesarlas con funciones PHP y devolver los resultados desde la base de datos MySQL. Las otras capas (presentación y visualización) se comunican con esta capa mandando peticiones POST.
+Esta capa recibe solicitudes en JSON desde las otras capas, las procesa con funciones PHP y devuelve los resultados desde MySQL. Ni la capa de presentación ni la de visualización tocan la base de datos directamente, todo pasa por aquí.
 
 ---
 
-## Estructura del proyecto
+## Estructura de carpetas
 
 ```
 datos/
 ├── api/
 │   ├── Consultas/
-│   │   └── endpoint.php        (solo SELECT - para estadísticas y filtros)
+│   │   └── endpoint.php        → solo SELECT (incidencias y estadísticas)
 │   ├── Incidencias/
-│   │   └── endpointdb.php      (INSERT, SELECT, UPDATE, DELETE de incidencias)
+│   │   └── endpointdb.php      → INSERT, SELECT, UPDATE, DELETE de incidencias
 │   ├── Usuarios/
-│   │   └── endpoint.php        (INSERT, SELECT, UPDATE, DELETE de usuarios)
-│   ├── request.php             (entrada general, enruta según tabla y operación)
-│   ├── request.json            (ejemplo de solicitud)
-│   └── response.json           (ejemplo de respuesta)
+│   │   └── endpoint.php        → INSERT, SELECT, UPDATE, DELETE de usuarios
+│   ├── request.php             → entrada general, enruta por tabla y operación
+│   ├── request.json            → ejemplo de solicitud
+│   └── response.json           → ejemplo de respuesta
 ├── conf_datos/
-│   └── conexion.php            (conexión a MySQL)
+│   └── conexion.php            → conexión PDO a MySQL
 └── func_datos/
-    ├── func.php                (funciones de incidencias)
-    ├── funcUsuarios.php        (funciones de usuarios)
-    └── funcConsultas.php       (funciones de consultas y estadísticas)
+    ├── func.php                → funciones CRUD de incidencias
+    ├── funcUsuarios.php        → funciones CRUD de usuarios
+    └── funcConsultas.php       → funciones de solo lectura para consultas y estadísticas
 ```
 
 ---
 
-## Cómo se conectan las capas
-
-La presentación y la visualización no tocan la base de datos directamente. Todo pasa por esta capa:
+## Cómo se comunican las capas
 
 ```
-[Capa Presentación]         [Capa Visualización]
-  formularios, login           mapa, dashboard
-        |                           |
-        |______POST (JSON)__________|
-                    |
-            [Capa de Datos]
-         api/ → func_datos/ → conf_datos/conexion.php
-                    |
-              Base de datos MySQL
-              (bonitareporta)
+  [Capa Presentación]                    [Capa Visualización]
+  formularios, login, registro           mapa, dashboard, filtros
+          |                                       |
+          |_______________POST (JSON)_____________|
+                                |
+                        [Capa de Datos]
+                           api/
+                            |
+                        func_datos/
+                            |
+                   conf_datos/conexion.php
+                            |
+                     Base de datos MySQL
+                       (bonitareporta)
 ```
 
-### Qué endpoint usa cada capa
+Cada endpoint recibe el JSON, identifica la tabla y la operación, llama a la función de `func_datos/` correspondiente, y esa función ejecuta la consulta usando la conexión de `conf_datos/conexion.php`.
 
-| Capa | Qué usa | Para qué |
-|------|---------|----------|
-| Presentación | `api/Incidencias/endpointdb.php` | Crear y editar reportes ciudadanos |
-| Presentación | `api/Usuarios/endpoint.php` | Registro, login y edición de perfil |
-| Visualización | `api/Consultas/endpoint.php` | Dashboard de estadísticas y filtros del mapa |
-| Visualización | `api/Incidencias/endpointdb.php` (SELECT) | Mostrar incidencias en el mapa |
+---
+
+## Qué endpoint usa cada capa
+
+| Capa          | Endpoint                         | Para qué lo usa                                           |
+|---------------|----------------------------------|-----------------------------------------------------------|
+| Presentación  | `api/Incidencias/endpointdb.php` | Crear reportes (INSERT) y actualizarlos (UPDATE)          |
+| Presentación  | `api/Usuarios/endpoint.php`      | Registro de ciudadanos (INSERT) y login (SELECT)          |
+| Visualización | `api/Consultas/endpoint.php`     | Cargar el dashboard con estadísticas y filtros del mapa   |
+| Visualización | `api/Incidencias/endpointdb.php` | Traer las incidencias para mostrarlas en el mapa (SELECT) |
 
 ---
 
@@ -62,17 +68,15 @@ La presentación y la visualización no tocan la base de datos directamente. Tod
 
 **POST** `datos/api/request.php`
 
-Es la puerta de entrada general. Recibe la solicitud y la redirige a la función correcta dependiendo de `table` y `operation`. Internamente usa los tres archivos de funciones: `func.php`, `funcUsuarios.php` y `funcConsultas.php`.
+Es la entrada general. Recibe cualquier solicitud, lee `table` y `operation`, y la manda a la función correcta. Importa los tres archivos de funciones: `func.php`, `funcUsuarios.php` y `funcConsultas.php`.
 
-Tablas y operaciones que acepta:
+| table          | operations que acepta          |
+|----------------|--------------------------------|
+| `incidencias`  | INSERT, SELECT, UPDATE, DELETE |
+| `usuarios`     | INSERT, SELECT, UPDATE, DELETE |
+| `estadisticas` | solo SELECT                    |
 
-| table | operations permitidas |
-|-------|-----------------------|
-| `incidencias` | INSERT, SELECT, UPDATE, DELETE |
-| `usuarios` | INSERT, SELECT, UPDATE, DELETE |
-| `estadisticas` | solo SELECT |
-
-Estructura base de cualquier solicitud:
+Estructura base de la solicitud:
 
 ```json
 {
@@ -84,7 +88,7 @@ Estructura base de cualquier solicitud:
 }
 ```
 
-Los campos `insert_data`, `update_data` y `condiciones` se usan según la operación. No todos son obligatorios en cada llamada.
+No todos los campos son obligatorios en cada llamada. `insert_data` va en INSERT, `update_data` y `condiciones` van en UPDATE, y `condiciones` solo en SELECT y DELETE.
 
 ---
 
@@ -92,11 +96,10 @@ Los campos `insert_data`, `update_data` y `condiciones` se usan según la operac
 
 **POST** `datos/api/Incidencias/endpointdb.php`
 
-Trabaja únicamente con la tabla `incidencias`. Si se manda otra tabla, devuelve error. Usa las funciones de `func_datos/func.php`.
+Solo trabaja con la tabla `incidencias`. Si llega otra tabla en el JSON, devuelve error de una vez. Usa las funciones de `func_datos/func.php`.
 
-**Lo usan:**
-- Capa de presentación → para que el ciudadano cree un reporte nuevo (INSERT) o lo edite (UPDATE)
-- Capa de visualización → para traer los reportes y mostrarlos en el mapa (SELECT)
+> **Presentación** lo usa para que el ciudadano cree un reporte (INSERT) o lo edite (UPDATE).  
+> **Visualización** lo usa con SELECT para mostrar las incidencias en el mapa.
 
 ### INSERT — crear incidencia
 
@@ -121,7 +124,7 @@ Solicitud:
 }
 ```
 
-Respuesta exitosa:
+Respuesta:
 ```json
 {
   "success": true,
@@ -144,7 +147,7 @@ Solicitud:
 }
 ```
 
-Respuesta exitosa:
+Respuesta:
 ```json
 {
   "success": true,
@@ -178,7 +181,7 @@ Solicitud:
 }
 ```
 
-Respuesta exitosa:
+Respuesta:
 ```json
 {
   "success": true,
@@ -200,7 +203,7 @@ Solicitud:
 }
 ```
 
-Respuesta exitosa:
+Respuesta:
 ```json
 {
   "success": true,
@@ -215,10 +218,9 @@ Respuesta exitosa:
 
 **POST** `datos/api/Usuarios/endpoint.php`
 
-Trabaja únicamente con la tabla `usuarios`. Si se manda otra tabla, devuelve error. Usa las funciones de `func_datos/funcUsuarios.php`.
+Solo trabaja con la tabla `usuarios`. Si llega otra tabla, devuelve error. Usa las funciones de `func_datos/funcUsuarios.php`.
 
-**Lo usa:**
-- Capa de presentación → para registrar ciudadanos nuevos (INSERT), hacer login (SELECT), actualizar perfil (UPDATE) y eliminar cuenta (DELETE)
+> **Presentación** lo usa para registrar ciudadanos nuevos (INSERT), hacer login (SELECT), editar perfil (UPDATE) y eliminar cuenta (DELETE).
 
 ### INSERT — registrar usuario
 
@@ -229,13 +231,14 @@ Solicitud:
   "table": "usuarios",
   "insert_data": {
     "nombre": "Laura Torres",
-    "correo": "laura@correo.com",
-    "password": "hash_seguro"
+    "email": "laura@correo.com",
+    "password": "hash_seguro",
+    "rol": "ciudadano"
   }
 }
 ```
 
-Respuesta exitosa:
+Respuesta:
 ```json
 {
   "success": true,
@@ -253,12 +256,12 @@ Solicitud:
   "operation": "SELECT",
   "table": "usuarios",
   "condiciones": {
-    "correo": "laura@correo.com"
+    "email": "laura@correo.com"
   }
 }
 ```
 
-Respuesta exitosa:
+Respuesta:
 ```json
 {
   "success": true,
@@ -266,7 +269,8 @@ Respuesta exitosa:
     {
       "id": 5,
       "nombre": "Laura Torres",
-      "correo": "laura@correo.com"
+      "email": "laura@correo.com",
+      "rol": "ciudadano"
     }
   ],
   "error": null
@@ -289,7 +293,7 @@ Solicitud:
 }
 ```
 
-Respuesta exitosa:
+Respuesta:
 ```json
 {
   "success": true,
@@ -311,7 +315,7 @@ Solicitud:
 }
 ```
 
-Respuesta exitosa:
+Respuesta:
 ```json
 {
   "success": true,
@@ -326,10 +330,9 @@ Respuesta exitosa:
 
 **POST** `datos/api/Consultas/endpoint.php`
 
-Este endpoint solo permite operaciones SELECT. Si se manda INSERT, UPDATE o DELETE, responde con error automáticamente. Usa las funciones de `func_datos/funcConsultas.php`.
+Solo acepta SELECT. Si llega INSERT, UPDATE o DELETE responde con error sin procesar nada. Usa las funciones de `func_datos/funcConsultas.php`.
 
-**Lo usa:**
-- Capa de visualización → para los filtros del mapa y para alimentar el dashboard con estadísticas
+> **Visualización** lo usa para los filtros del mapa y para cargar el dashboard con estadísticas agrupadas.
 
 ### SELECT — consultar incidencias con filtros
 
@@ -344,7 +347,7 @@ Solicitud:
 }
 ```
 
-Respuesta exitosa:
+Respuesta:
 ```json
 {
   "success": true,
@@ -363,30 +366,33 @@ Respuesta exitosa:
 
 ### SELECT — consultar estadísticas
 
+La función `consultarEstadisticas` hace tres consultas internas: total de incidencias, conteo agrupado por estado y conteo agrupado por zona. Todo llega junto en `data`.
+
 Solicitud:
 ```json
 {
   "operation": "SELECT",
   "table": "estadisticas",
-  "condiciones": {
-    "zona": "Norte"
-  }
+  "condiciones": {}
 }
 ```
 
-Respuesta exitosa:
+Respuesta:
 ```json
 {
   "success": true,
-  "data": [
-    {
-      "zona": "Norte",
-      "total": 15,
-      "pendientes": 8,
-      "en_proceso": 5,
-      "resueltas": 2
-    }
-  ],
+  "data": {
+    "total_incidencias": 42,
+    "por_estado": [
+      { "estado": "Reportado", "cantidad": 20 },
+      { "estado": "En proceso", "cantidad": 15 },
+      { "estado": "Resuelto", "cantidad": 7 }
+    ],
+    "por_zona": [
+      { "zona": "Norte", "cantidad": 18 },
+      { "zona": "Sur", "cantidad": 24 }
+    ]
+  },
   "error": null
 }
 ```
@@ -397,50 +403,50 @@ Respuesta exitosa:
 
 ### func.php
 
-**Ubicación:** `datos/func_datos/func.php`
-**Lo importan:** `api/Incidencias/endpointdb.php` y `api/request.php`
-**Depende de:** `conf_datos/conexion.php`
+**Ubicación:** `datos/func_datos/func.php`  
+**Lo importan:** `api/Incidencias/endpointdb.php` y `api/request.php`  
+**Depende de:** `conf_datos/conexion.php` — todas las funciones usan `global $conn`
 
-Tiene todas las funciones para manejar la tabla `incidencias`. Usa sentencias preparadas para evitar inyección SQL.
+Tiene el CRUD completo de `incidencias`. Usa `bind_param` con sentencias preparadas para evitar inyección SQL. El INSERT recibe 11 campos con tipos `"sssssiddsss"`.
 
 | Función | Parámetros | Qué hace |
 |---------|------------|----------|
-| `insertarIncidencia($data)` | array con los campos de la incidencia | Inserta una incidencia nueva. Usa `bind_param` con 11 campos. Devuelve el `insert_id` si fue exitoso. |
-| `obtenerIncidencias($condiciones)` | array clave-valor, puede ir vacío | Trae todas las incidencias. Si se pasan condiciones, filtra por el primer campo del array. |
-| `actualizarIncidencia($data, $condiciones)` | `$data` campos a cambiar / `$condiciones` filtro | Arma el UPDATE dinámicamente con los campos que lleguen. Usa sentencia preparada. |
-| `eliminarIncidencia($condiciones)` | array con el campo y valor del filtro | Elimina la incidencia que coincida. Usa sentencia preparada. |
+| `insertarIncidencia($data)` | array con titulo, tipo, descripcion, zona, barrio, usuario_id, lat, lng, estado, prioridad, fecha_creacion | Inserta la incidencia con prepared statement. Devuelve `insert_id` si salió bien. |
+| `obtenerIncidencias($condiciones)` | array clave-valor, puede ir vacío | SELECT * de incidencias. Si hay condiciones filtra por el primer campo del array con WHERE. |
+| `actualizarIncidencia($data, $condiciones)` | `$data` con los campos a cambiar / `$condiciones` con el WHERE | Arma el SET dinámicamente recorriendo `$data`. Agrega el valor de condiciones al final del bind_param. |
+| `eliminarIncidencia($condiciones)` | array con campo y valor del filtro | DELETE con prepared statement sobre el campo que llegue en condiciones. |
 
 ---
 
 ### funcUsuarios.php
 
-**Ubicación:** `datos/func_datos/funcUsuarios.php`
-**Lo importan:** `api/Usuarios/endpoint.php` y `api/request.php`
-**Depende de:** `conf_datos/conexion.php`
+**Ubicación:** `datos/func_datos/funcUsuarios.php`  
+**Lo importan:** `api/Usuarios/endpoint.php` y `api/request.php`  
+**Depende de:** `conf_datos/conexion.php` — todas las funciones usan `global $conn`
 
-Tiene todas las funciones para manejar la tabla `usuarios`.
+Tiene el CRUD completo de `usuarios`. Misma lógica que `func.php` pero para la tabla de usuarios. El INSERT trabaja con cuatro campos: `nombre`, `email`, `password` y `rol`.
 
 | Función | Parámetros | Qué hace |
 |---------|------------|----------|
-| `registrarUsuario($data)` | array con los datos del usuario | Inserta un usuario nuevo en la base de datos. |
-| `obtenerUsuario($condiciones)` | array clave-valor, puede ir vacío | Trae uno o varios usuarios. Si se pasan condiciones, filtra por el primer campo. |
-| `actualizarUsuario($data, $condiciones)` | `$data` campos a cambiar / `$condiciones` filtro | Actualiza los datos del usuario que coincida con la condición. |
-| `eliminarUsuario($condiciones)` | array con el campo y valor del filtro | Elimina el usuario que coincida con la condición. |
+| `registrarUsuario($data)` | array con nombre, email, password y rol | Inserta el usuario con `bind_param("ssss", ...)`. Devuelve `insert_id` si salió bien. |
+| `obtenerUsuario($condiciones)` | array clave-valor, puede ir vacío | SELECT * de usuarios. Si hay condiciones filtra por el primer campo. Sirve para el login buscando por email. |
+| `actualizarUsuario($data, $condiciones)` | `$data` con los campos a cambiar / `$condiciones` con el WHERE | Construye el UPDATE dinámicamente igual que en incidencias. |
+| `eliminarUsuario($condiciones)` | array con campo y valor del filtro | DELETE con prepared statement sobre el campo que llegue en condiciones. |
 
 ---
 
 ### funcConsultas.php
 
-**Ubicación:** `datos/func_datos/funcConsultas.php`
-**Lo importan:** `api/Consultas/endpoint.php` y `api/request.php`
-**Depende de:** `conf_datos/conexion.php`
+**Ubicación:** `datos/func_datos/funcConsultas.php`  
+**Lo importan:** `api/Consultas/endpoint.php` y `api/request.php`  
+**Depende de:** `conf_datos/conexion.php` — todas las funciones usan `global $conn`
 
-Solo tiene funciones de lectura. No hace INSERT, UPDATE ni DELETE. Está pensada para alimentar la capa de visualización con datos ya procesados.
+Solo lectura. No tiene INSERT, UPDATE ni DELETE. Está hecha para darle a la capa de visualización los datos que necesita ya procesados, sin que tenga que hacer lógica extra.
 
 | Función | Parámetros | Qué hace |
 |---------|------------|----------|
-| `consultarIncidencias($condiciones)` | array clave-valor con filtros opcionales | Devuelve incidencias filtradas por zona, estado, tipo, etc. La usa principalmente el mapa. |
-| `consultarEstadisticas($condiciones)` | array clave-valor con filtros opcionales | Devuelve conteos y agrupaciones (totales por zona, por estado) para el dashboard de visualización. |
+| `consultarIncidencias($condiciones)` | array clave-valor con filtros opcionales | SELECT * de incidencias con filtro opcional por zona, estado, tipo, etc. La usa el mapa para cargar los puntos. |
+| `consultarEstadisticas($condiciones)` | array clave-valor con filtros opcionales | Hace tres queries: `COUNT(*)` total, `GROUP BY estado` y `GROUP BY zona`. Devuelve todo junto en `data` con las claves `total_incidencias`, `por_estado` y `por_zona`. |
 
 ---
 
@@ -448,35 +454,43 @@ Solo tiene funciones de lectura. No hace INSERT, UPDATE ni DELETE. Está pensada
 
 **Ubicación:** `datos/conf_datos/conexion.php`
 
-Crea la conexión MySQL con `mysqli`. La usan todos los archivos de `func_datos/` importándola con `require_once` y accediendo a `$conn` como variable global.
+Crea la conexión usando PDO con `utf8mb4`. Todos los archivos de `func_datos/` la importan con `require_once` y acceden a la conexión con `global $conn`.
 
-Si la conexión falla, devuelve un JSON de error con la misma estructura que usan todos los endpoints, para que la respuesta sea uniforme siempre.
+Si la conexión falla, registra el error en el log del servidor con `error_log()` y devuelve `null`, sin exponer el mensaje de error en la respuesta HTTP.
 
-| Parámetro | Valor |
-|-----------|-------|
-| host | localhost |
-| user | root |
-| password | (vacío) |
-| database | bonitareporta |
-| charset | utf8 |
+| Parámetro  | Valor             |
+|------------|-------------------|
+| host       | localhost         |
+| user       | root              |
+| password   | (vacío)           |
+| database   | bonitareporta     |
+| charset    | utf8mb4           |
+| fetch mode | FETCH_ASSOC       |
+| error mode | ERRMODE_EXCEPTION |
 
-Cómo fluye la conexión:
+Opciones que se configuran en PDO:
+
+- `ERRMODE_EXCEPTION` — los errores de SQL lanzan excepciones en vez de fallar silenciosamente
+- `FETCH_ASSOC` — los resultados llegan como arrays asociativos
+- `EMULATE_PREPARES => false` — usa prepared statements reales del servidor MySQL
+
+Cómo la usan los archivos de funciones:
 
 ```
 func.php / funcUsuarios.php / funcConsultas.php
     |
     └── require_once '../conf_datos/conexion.php'
               |
-              └── $conn disponible como global en todas las funciones
+              └── $conn disponible con global $conn dentro de cada función
 ```
 
 ---
 
 ## Formato de respuesta
 
-Todos los endpoints de esta capa devuelven siempre la misma estructura JSON para que la presentación y la visualización puedan manejar las respuestas de forma predecible.
+Todos los endpoints devuelven siempre la misma estructura para que presentación y visualización puedan manejar las respuestas de forma predecible sin casos especiales.
 
-Respuesta exitosa:
+Cuando sale bien:
 ```json
 {
   "success": true,
@@ -486,7 +500,7 @@ Respuesta exitosa:
 }
 ```
 
-Respuesta con error:
+Cuando falla algo:
 ```json
 {
   "success": false,
@@ -497,19 +511,20 @@ Respuesta con error:
 ```
 
 Notas:
-- `insert_id` solo tiene valor en operaciones INSERT. En SELECT, UPDATE y DELETE siempre es `null`.
-- `affected_rows` indica cuántas filas fueron modificadas. En SELECT es `null`.
+- `insert_id` solo tiene valor en INSERT. En el resto siempre es `null`.
+- `affected_rows` aplica en INSERT, UPDATE y DELETE.
+- En SELECT exitoso los datos vienen en el campo `data` como array.
 - `error` siempre es `null` cuando `success` es `true`.
 
 ---
 
 ## Tablas en la base de datos
 
-| Tabla | Descripción |
-|-------|-------------|
-| `incidencias` | Guarda los reportes que hacen los ciudadanos |
-| `usuarios` | Guarda los ciudadanos registrados en la plataforma |
-| `sectores` | Guarda las zonas y barrios del municipio |
+| Tabla         | Descripción                                        |
+|---------------|----------------------------------------------------|
+| `incidencias` | Guarda los reportes que hacen los ciudadanos       |
+| `usuarios`    | Guarda los ciudadanos registrados en la plataforma |
+| `sectores`    | Guarda las zonas y barrios del municipio           |
 
 ---
 
