@@ -68,15 +68,41 @@ La aplicación se comunica con la capa de lógica mediante solicitudes HTTP util
 
 ```json
 {
-  "titulo": "Falla de Alumbrado",
-  "tipo": "Alumbrado",
-  "descripcion": "No funcionan las luces",
-  "zona": "Centro",
-  "barrio": "La Esperanza",
-  "direccion": "Cra 15 #45-32",
-  "usuario_id": 12
+  "accion": "crear_incidencia",
+  "datos": {
+    "titulo": "Falla de Alumbrado",
+    "tipo": "Alumbrado",
+    "descripcion": "No funcionan las luces",
+    "zona": "Centro",
+    "barrio": "La Esperanza",
+    "direccion": "Cra 15 #45-32",
+    "usuario_id": 12,
+    "latitud": 7.1186,
+    "longitud": -73.1161,
+    "fecha_hora_registro": "15/05/26 16:55"
+  }
 }
 ```
+
+### Ejemplo: Editar incidencia
+
+```json
+
+{
+  "accion": "editar_incidencia",
+  "datos": {
+    "incidencia_id": 501,
+    "titulo": "Falla de Alumbrado",
+    "tipo": "Alumbrado",
+    "estado": "Resuelto",
+    "prioridad": "Media",
+    "ciudad": "Bucaramanga",
+    "barrio": "La Esperanza",
+    "direccion": "Cra 15 #45-32",
+    "descripcion": "Poste parpadea toda la noche",
+    "fecha_hora_resolucion": "15/05/26 17:01"
+  }
+}
 
 ### Ejemplo: Inicio de sesión
 

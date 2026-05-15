@@ -59,6 +59,12 @@
                                     <option value="En Proceso">En Proceso</option>
                                     <option value="Resuelto">Resuelto</option>
                                 </select>
+                                <div class="resolucion-badge" id="resolucionBadge" style="display: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>Se registrará fecha de resolución</span>
+                                </div>
                             </div>
                         </div>
 
@@ -106,6 +112,9 @@
                             <textarea id="descripcion" name="descripcion" required></textarea>
                             <span class="error-msg">La descripcion es obligatoria</span>
                         </div>
+
+                        <!-- UNA SOLA VARIABLE PARA FECHA/HORA DE RESOLUCIÓN -->
+                        <input type="hidden" id="fecha_hora_resolucion" name="fecha_hora_resolucion">
 
                         <div class="form-actions">
                             <button type="button" class="btn-cancelar" id="btnCancelar">
@@ -185,8 +194,17 @@
 
                         <div class="preview-divider"></div>
 
+                        <!-- UNA SOLA VARIABLE EN VISTA PREVIA -->
+                        <div class="preview-resolucion" id="previewResolucion" style="display: none;">
+                            <div class="preview-field">
+                                <span class="preview-label">Fecha y hora de resolución</span>
+                                <span class="preview-valor resuelto-fecha" id="previewFechaHoraResolucion">--</span>
+                            </div>
+                            <div class="preview-divider"></div>
+                        </div>
+
                         <div class="preview-meta">
-                            <span>Usuario #<span id="previewUsuario">12</span></span>
+                            <span>Usuario #<<span id="previewUsuario">12</span></span>
                             <span id="previewFecha">12 may 2026</span>
                         </div>
                     </div>
@@ -216,6 +234,16 @@
 
             <div class="resumen-cambios" id="resumenCambios">
                 <!-- Se llena dinamicamente con los cambios realizados -->
+            </div>
+
+            <div class="resolucion-aviso" id="resolucionAviso" style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                    <strong>Incidencia marcada como Resuelta</strong>
+                    <span>Se registrará automáticamente la fecha y hora de resolución</span>
+                </div>
             </div>
 
             <div class="modal-actions">

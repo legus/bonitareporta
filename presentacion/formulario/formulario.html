@@ -86,6 +86,55 @@
                     <span class="error-msg">Ingresa una dirección válida</span>
                 </div>
 
+                <!-- GEOLOCALIZACIÓN -->
+                <div class="form-group geo-group">
+                    <label>Ubicación geográfica</label>
+                    <div class="geo-container">
+                        <button type="button" class="btn-geo" id="btnGeo">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                            </svg>
+                            <span class="btn-geo-text">Obtener mi ubicación</span>
+                        </button>
+                        <div class="geo-status" id="geoStatus"></div>
+                    </div>
+                    <div class="geo-coords" id="geoCoords" style="display: none;">
+                        <div class="coord-item">
+                            <span class="coord-label">Latitud</span>
+                            <span class="coord-value" id="latValue">--</span>
+                        </div>
+                        <div class="coord-item">
+                            <span class="coord-label">Longitud</span>
+                            <span class="coord-value" id="lngValue">--</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="latitud" name="latitud">
+                    <input type="hidden" id="longitud" name="longitud">
+                    <span class="geo-hint">Opcional: Permite ubicar el reporte con mayor precisión en el mapa</span>
+                </div>
+
+                <!-- FECHA Y HORA DE REGISTRO - UNA SOLA VARIABLE -->
+                <div class="form-group datetime-group">
+                    <label>Fecha y hora de registro</label>
+                    <div class="datetime-display" id="datetimeDisplay">
+                        <div class="datetime-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                            </svg>
+                            <span id="fechaHoraValor">--</span>
+                        </div>
+                        <button type="button" class="btn-refresh-datetime" id="btnRefreshDatetime" title="Actualizar fecha y hora">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- UNA SOLA VARIABLE COMBINADA -->
+                    <input type="hidden" id="fecha_hora_registro" name="fecha_hora_registro">
+                    <span class="geo-hint">Se registra automáticamente al momento de enviar el reporte</span>
+                </div>
+
                 <div class="form-group">
                     <label for="descripcion">Descripción del problema</label>
                     <textarea id="descripcion" name="descripcion" placeholder="Describe detalladamente el inconveniente..." required></textarea>
@@ -142,6 +191,15 @@
                 <div class="summary-row">
                     <span class="key">Dirección</span>
                     <span class="val" id="sumDireccion">Carrera 27 # 45-12</span>
+                </div>
+                <div class="summary-row" id="sumGeoRow" style="display: none;">
+                    <span class="key">Coordenadas</span>
+                    <span class="val" id="sumGeo">--</span>
+                </div>
+                <!-- UNA SOLA VARIABLE EN EL RESUMEN -->
+                <div class="summary-row">
+                    <span class="key">Fecha y hora de registro</span>
+                    <span class="val" id="sumFechaHora">--</span>
                 </div>
                 <div class="summary-row">
                     <span class="key">Descripción</span>

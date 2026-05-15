@@ -5,7 +5,6 @@
 // ============================================================
 
 // --- CONFIGURACIÓN DEL API ---
-// Ruta absoluta para evitar problemas con carpetas duplicadas
 var API_URL = '/BonitaReporta/logica/api/editar_incidencia.php';
 
 // --- Datos de la incidencia (simulando respuesta previa del API) ---
@@ -20,7 +19,9 @@ var incidenciaOriginal = {
   usuario_id: 12,
   fecha: '12 may 2026',
   estado: 'Pendiente',
-  prioridad: 'Media'
+  prioridad: 'Media',
+  // UNA SOLA VARIABLE PARA FECHA/HORA DE RESOLUCIÓN
+  fecha_hora_resolucion: null  // "15/05/26 16:56" o null
 };
 
 var incidenciaActual = JSON.parse(JSON.stringify(incidenciaOriginal));
@@ -39,6 +40,15 @@ var inputs = {
   direccion: document.getElementById('direccion'),
   descripcion: document.getElementById('descripcion')
 };
+
+// UNA SOLA VARIABLE PARA RESOLUCIÓN
+var fechaHoraResolucionInput = document.getElementById('fecha_hora_resolucion');
+
+// Elementos de UI de resolución
+var resolucionBadge = document.getElementById('resolucionBadge');
+var previewResolucion = document.getElementById('previewResolucion');
+var previewFechaHoraResolucion = document.getElementById('previewFechaHoraResolucion');
+var resolucionAviso = document.getElementById('resolucionAviso');
 
 var preview = {
   id: document.getElementById('previewId'),
@@ -70,7 +80,69 @@ function inicializarFormulario() {
   inputs.direccion.value = incidenciaActual.direccion;
   inputs.descripcion.value = incidenciaActual.descripcion;
 
+  // Si ya tiene fecha/hora de resolución, mostrarla
+  if (incidenciaActual.fecha_hora_resolucion) {
+    previewFechaHoraResolucion.textContent = incidenciaActual.fecha_hora_resolucion;
+    previewResolucion.style.display = 'block';
+  }
+
   actualizarVistaPrevia();
+}
+
+// --- NUEVO: Función para obtener fecha/hora actual formateada ---
+function obtenerFechaHoraActual() {
+  var ahora = new Date();
+  
+  var dia = String(ahora.getDate()).padStart(2, '0');
+  var mes = String(ahora.getMonth() + 1).padStart(2, '0');
+  var anio = String(ahora.getFullYear()).slice(-2);
+  var fechaStr = dia + '/' + mes + '/' + anio;
+  
+  var horas = String(ahora.getHours()).padStart(2, '0');
+  var minutos = String(ahora.getMinutes()).padStart(2, '0');
+  var horaStr = horas + ':' + minutos;
+  
+  // UNA SOLA VARIABLE COMBINADA
+  return fechaStr + ' ' + horaStr;  // "15/05/26 16:56"
+}
+
+// --- NUEVO: Verificar si se debe registrar resolución ---
+function debeRegistrarResolucion() {
+  var estadoAnterior = incidenciaOriginal.estado;
+  var estadoNuevo = incidenciaActual.estado;
+  
+  var eraNoResuelto = (estadoAnterior === 'Pendiente' || estadoAnterior === 'En Proceso');
+  var ahoraEsResuelto = (estadoNuevo === 'Resuelto');
+  
+  return eraNoResuelto && ahoraEsResuelto;
+}
+
+// --- NUEVO: Actualizar UI de resolución ---
+function actualizarUIResolucion() {
+  var seRegistrara = debeRegistrarResolucion();
+  
+  if (seRegistrara) {
+    resolucionBadge.style.display = 'flex';
+    
+    // Calcular y mostrar fecha/hora preview
+    var fechaHoraCompleta = obtenerFechaHoraActual();
+    previewFechaHoraResolucion.textContent = fechaHoraCompleta;
+    previewResolucion.style.display = 'block';
+    
+    // Guardar en input oculto (UNA SOLA VARIABLE)
+    fechaHoraResolucionInput.value = fechaHoraCompleta;
+  } else {
+    resolucionBadge.style.display = 'none';
+    
+    // Si ya tenía resolución guardada, mantenerla visible
+    if (incidenciaActual.fecha_hora_resolucion) {
+      previewFechaHoraResolucion.textContent = incidenciaActual.fecha_hora_resolucion;
+      previewResolucion.style.display = 'block';
+    } else {
+      previewResolucion.style.display = 'none';
+      fechaHoraResolucionInput.value = '';
+    }
+  }
 }
 
 // --- Actualizar vista previa ---
@@ -91,6 +163,9 @@ function actualizarVistaPrevia() {
 
   preview.prioridad.textContent = incidenciaActual.prioridad;
   preview.prioridad.className = 'preview-badge-prioridad ' + incidenciaActual.prioridad.toLowerCase();
+  
+  // Actualizar sección de resolución
+  actualizarUIResolucion();
 }
 
 // --- Detectar cambios ---
@@ -200,6 +275,13 @@ form.addEventListener('submit', function(e) {
     return;
   }
 
+  // Mostrar aviso de resolución en el modal si aplica
+  if (debeRegistrarResolucion()) {
+    resolucionAviso.style.display = 'flex';
+  } else {
+    resolucionAviso.style.display = 'none';
+  }
+
   document.getElementById('confirmarId').textContent = '#' + incidenciaActual.id;
   generarResumenCambios();
   modalConfirmar.classList.add('active');
@@ -254,8 +336,21 @@ document.getElementById('btnConfirmarGuardar').addEventListener('click', functio
   var btn = this;
   btn.classList.add('loading');
 
+  // UNA SOLA VARIABLE PARA FECHA/HORA DE RESOLUCIÓN
+  var fechaHoraResolucion = null;
+  
+  if (debeRegistrarResolucion()) {
+    fechaHoraResolucion = obtenerFechaHoraActual();
+    
+    // Actualizar el objeto actual para mantener consistencia
+    incidenciaActual.fecha_hora_resolucion = fechaHoraResolucion;
+  } else if (incidenciaActual.fecha_hora_resolucion) {
+    // Mantener valor existente si ya estaba resuelto
+    fechaHoraResolucion = incidenciaActual.fecha_hora_resolucion;
+  }
+
   // ============================================================
-  // CONSTRUIR CONTRATO JSON SEGÚN GUÍA DE INTEGRACIÓN
+  // CONSTRUIR CONTRATO JSON
   // ============================================================
   var contratoJSON = {
     accion: "editar_incidencia",
@@ -268,7 +363,8 @@ document.getElementById('btnConfirmarGuardar').addEventListener('click', functio
       ciudad: incidenciaActual.ciudad,
       barrio: incidenciaActual.barrio,
       direccion: incidenciaActual.direccion,
-      descripcion: incidenciaActual.descripcion
+      descripcion: incidenciaActual.descripcion,
+      fecha_hora_resolucion: fechaHoraResolucion 
     }
   };
 
@@ -277,9 +373,6 @@ document.getElementById('btnConfirmarGuardar').addEventListener('click', functio
   console.log("[PRUEBA] Payload:", JSON.stringify(contratoJSON, null, 2));
   console.log("[PRUEBA] =========================================");
 
-  // ============================================================
-  // FETCH: Envío HTTP POST con JSON al Dummy PHP
-  // ============================================================
   fetch(API_URL, {
     method: 'POST',
     headers: {
@@ -293,7 +386,6 @@ document.getElementById('btnConfirmarGuardar').addEventListener('click', functio
     console.log("[PRUEBA] exito:", respuesta.exito, "| mensaje:", respuesta.mensaje);
 
     if (respuesta.exito === true) {
-      // ÉXITO
       incidenciaOriginal = JSON.parse(JSON.stringify(incidenciaActual));
       hayCambios = false;
 
@@ -307,7 +399,6 @@ document.getElementById('btnConfirmarGuardar').addEventListener('click', functio
         window.location.href = '../VerIncidencias/ver_incidencias.html';
       }, 1500);
     } else {
-      // FALLIDO
       throw new Error(respuesta.mensaje || 'Error al actualizar');
     }
   })
