@@ -1,25 +1,26 @@
 <?php
-// Parámetros de conexión
-$host = "localhost";       // Cambiar si usas otro servidor
-$user = "root";            // Usuario de la base de datos
-$password = "";            // Contraseña del usuario
-$database = "bonitareporta"; // Nombre de la base de datos
 
-// Crear conexión
-$conn = new mysqli($host, $user, $password, $database);
+function getConnection() {
+    $host = "localhost";
+    $db   = "bonitareporta";
+    $user = "root";
+    $pass = ""; // Reemplazar con contraseña segura
+    $charset = "utf8mb4";
 
-// Verificar conexión
-if ($conn->connect_error) {
-    die(json_encode([
-        "success" => false,
-        "insert_id" => null,
-        "affected_rows" => 0,
-        "error" => "Error de conexión: " . $conn->connect_error
-    ]));
+    $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+    $options = [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, // Manejo de errores con excepciones
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,       // Resultados como arrays asociativos
+        PDO::ATTR_EMULATE_PREPARES   => false,                  // Prepared statements reales
+    ];
+
+    try {
+        $pdo = new PDO($dsn, $user, $pass, $options);
+        return $pdo;
+    } catch (PDOException $e) {
+        // Registrar error en log y devolver null
+        error_log("Error de conexión: " . $e->getMessage());
+        return null;
+    }
 }
-
-// Configurar charset para evitar problemas con acentos
-$conn->set_charset("utf8");
-
-// Retornar conexión para ser usada en otros scripts
 ?>
