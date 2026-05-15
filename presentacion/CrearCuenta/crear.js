@@ -102,6 +102,7 @@ document.getElementById('btnCrear').addEventListener('click', function() {
       btn.textContent = 'Crear cuenta';
     }
   })
+  
   .catch(function(error) {
     mostrarToast('Error de conexión. Verifica XAMPP.', true);
     btn.disabled = false;
@@ -109,9 +110,11 @@ document.getElementById('btnCrear').addEventListener('click', function() {
   });
 });
 
+
 document.getElementById('btnGoogle').addEventListener('click', function() {
   mostrarToast('Registro con Google próximamente.', false);
 });
+
 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') document.getElementById('btnCrear').click();

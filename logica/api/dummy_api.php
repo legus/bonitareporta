@@ -2,7 +2,8 @@
 /**
  * Dummy API - BonitaReporta
  * Archivo unificado para pruebas de integración
- */
+ * Cada acción se simula con respuestas predefinidas y validaciones básicas
+ */ 
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
