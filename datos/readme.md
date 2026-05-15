@@ -21,7 +21,7 @@ datos/
 │   ├── request.json            → ejemplo de solicitud
 │   └── response.json           → ejemplo de respuesta
 ├── conf_datos/
-│   └── conexion.php            → conexión PDO a MySQL
+│   └── conexion.php            → conexión MySQLi a MySQL
 └── func_datos/
     ├── func.php                → funciones CRUD de incidencias
     ├── funcUsuarios.php        → funciones CRUD de usuarios
@@ -409,12 +409,12 @@ Respuesta:
 
 Tiene el CRUD completo de `incidencias`. Usa `bind_param` con sentencias preparadas para evitar inyección SQL. El INSERT recibe 11 campos con tipos `"sssssiddsss"`.
 
-| Función | Parámetros | Qué hace |
-|---------|------------|----------|
-| `insertarIncidencia($data)` | array con titulo, tipo, descripcion, zona, barrio, usuario_id, lat, lng, estado, prioridad, fecha_creacion | Inserta la incidencia con prepared statement. Devuelve `insert_id` si salió bien. |
-| `obtenerIncidencias($condiciones)` | array clave-valor, puede ir vacío | SELECT * de incidencias. Si hay condiciones filtra por el primer campo del array con WHERE. |
-| `actualizarIncidencia($data, $condiciones)` | `$data` con los campos a cambiar / `$condiciones` con el WHERE | Arma el SET dinámicamente recorriendo `$data`. Agrega el valor de condiciones al final del bind_param. |
-| `eliminarIncidencia($condiciones)` | array con campo y valor del filtro | DELETE con prepared statement sobre el campo que llegue en condiciones. |
+| Función                                     | Parámetros                                                                                                 | Qué hace   |
+|---------------------------------------------|------------------------------------------------------------------------------------------------------------|------------|
+| `insertarIncidencia($data)`                 | array con titulo, tipo, descripcion, zona, barrio, usuario_id, lat, lng, estado, prioridad, fecha_creacion | Inserta la incidencia con prepared statement. Devuelve `insert_id` si salió bien.                                                                                                  |
+| `obtenerIncidencias($condiciones)`          | array clave-valor, puede ir vacío                                                                          | SELECT * de incidencias. Si hay condiciones filtra por el primer campo del array con WHERE.                                                                                         |
+| `actualizarIncidencia($data, $condiciones)` | `$data` con los campos a cambiar / `$condiciones` con el WHERE                                             | Arma el SET dinámicamente recorriendo `$data`. Agrega el valor de condiciones al final del bind_param.                                                                                                                                                             |
+| `eliminarIncidencia($condiciones)`          | array con campo y valor del filtro                                                                         | DELETE con prepared statement sobre el campo que llegue en condiciones.                                                                                                            |
 
 ---
 
@@ -426,12 +426,12 @@ Tiene el CRUD completo de `incidencias`. Usa `bind_param` con sentencias prepara
 
 Tiene el CRUD completo de `usuarios`. Misma lógica que `func.php` pero para la tabla de usuarios. El INSERT trabaja con cuatro campos: `nombre`, `email`, `password` y `rol`.
 
-| Función | Parámetros | Qué hace |
-|---------|------------|----------|
-| `registrarUsuario($data)` | array con nombre, email, password y rol | Inserta el usuario con `bind_param("ssss", ...)`. Devuelve `insert_id` si salió bien. |
-| `obtenerUsuario($condiciones)` | array clave-valor, puede ir vacío | SELECT * de usuarios. Si hay condiciones filtra por el primer campo. Sirve para el login buscando por email. |
-| `actualizarUsuario($data, $condiciones)` | `$data` con los campos a cambiar / `$condiciones` con el WHERE | Construye el UPDATE dinámicamente igual que en incidencias. |
-| `eliminarUsuario($condiciones)` | array con campo y valor del filtro | DELETE con prepared statement sobre el campo que llegue en condiciones. |
+| Función                                  | Parámetros                                                     | Qué hace                                                  |
+|------------------------------------------|----------------------------------------------------------------|-----------------------------------------------------------|
+| `registrarUsuario($data)`                | array con nombre, email, password y rol                        | Inserta el usuario con `bind_param("ssss", ...)`. Devuelve `insert_id` si salió bien.                                                                                                                                              |
+| `obtenerUsuario($condiciones)`           | array clave-valor, puede ir vacío                              | SELECT * de usuarios. Si hay condiciones filtra por el primer campo. Sirve para el login buscando por email.                                                                                                                   |
+| `actualizarUsuario($data, $condiciones)` | `$data` con los campos a cambiar / `$condiciones` con el WHERE | Construye el UPDATE dinámicamente igual que en incidencias.                                                                                                                                                            |
+| `eliminarUsuario($condiciones)`          | array con campo y valor del filtro                             | DELETE con prepared statement sobre el campo que llegue en condiciones.                                                                                                                                                            |
 
 ---
 
@@ -443,10 +443,10 @@ Tiene el CRUD completo de `usuarios`. Misma lógica que `func.php` pero para la 
 
 Solo lectura. No tiene INSERT, UPDATE ni DELETE. Está hecha para darle a la capa de visualización los datos que necesita ya procesados, sin que tenga que hacer lógica extra.
 
-| Función | Parámetros | Qué hace |
-|---------|------------|----------|
-| `consultarIncidencias($condiciones)` | array clave-valor con filtros opcionales | SELECT * de incidencias con filtro opcional por zona, estado, tipo, etc. La usa el mapa para cargar los puntos. |
-| `consultarEstadisticas($condiciones)` | array clave-valor con filtros opcionales | Hace tres queries: `COUNT(*)` total, `GROUP BY estado` y `GROUP BY zona`. Devuelve todo junto en `data` con las claves `total_incidencias`, `por_estado` y `por_zona`. |
+| Función                              | Parámetros                               | Qué hace                                                                           |
+|--------------------------------------|------------------------------------------|------------------------------------------------------------------------------------|
+| `consultarIncidencias($condiciones)` | array clave-valor con filtros opcionales | SELECT * de incidencias con filtro opcional por zona, estado, tipo, etc. La usa el mapa para cargar los puntos.                                                                                                                                           |
+| `consultarEstadisticas($condiciones)`| array clave-valor con filtros opcionales | Hace tres queries: `COUNT(*)` total, `GROUP BY estado` y `GROUP BY zona`. Devuelve todo junto en `data` con las claves `total_incidencias`, `por_estado` y `por_zona`.                                                                                    |
 
 ---
 
@@ -454,9 +454,9 @@ Solo lectura. No tiene INSERT, UPDATE ni DELETE. Está hecha para darle a la cap
 
 **Ubicación:** `datos/conf_datos/conexion.php`
 
-Crea la conexión usando PDO con `utf8mb4`. Todos los archivos de `func_datos/` la importan con `require_once` y acceden a la conexión con `global $conn`.
+Crea la conexión usando **MySQLi** con `utf8mb4`. Todos los archivos de `func_datos/` la importan con `require_once` y acceden a la conexión con `global $conn`.
 
-Si la conexión falla, registra el error en el log del servidor con `error_log()` y devuelve `null`, sin exponer el mensaje de error en la respuesta HTTP.
+Si la conexión falla, devuelve un JSON con error, sin exponer detalles internos del servidor.
 
 | Parámetro  | Valor             |
 |------------|-------------------|
@@ -465,14 +465,26 @@ Si la conexión falla, registra el error en el log del servidor con `error_log()
 | password   | (vacío)           |
 | database   | bonitareporta     |
 | charset    | utf8mb4           |
-| fetch mode | FETCH_ASSOC       |
-| error mode | ERRMODE_EXCEPTION |
 
-Opciones que se configuran en PDO:
+### Código actual (MySQLi)
 
-- `ERRMODE_EXCEPTION` — los errores de SQL lanzan excepciones en vez de fallar silenciosamente
-- `FETCH_ASSOC` — los resultados llegan como arrays asociativos
-- `EMULATE_PREPARES => false` — usa prepared statements reales del servidor MySQL
+```php
+<?php
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "bonitareporta";
+
+$conn = new mysqli($host, $user, $password, $database);
+
+if ($conn->connect_error) {
+    die(json_encode([
+        "success" => false,
+        "error" => "Error de conexión: " . $conn->connect_error
+    ]));
+}
+$conn->set_charset("utf8mb4");
+?>
 
 Cómo la usan los archivos de funciones:
 
