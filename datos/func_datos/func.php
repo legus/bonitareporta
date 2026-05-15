@@ -1,3 +1,4 @@
+<?php
 function obtenerIncidencias($condiciones = []) {
     global $conn;
     $sql = "SELECT * FROM incidencias";
