@@ -33,10 +33,7 @@ BonitaReporta-API/
   "zona": "Norte",
   "barrio": "La Esperanza",
   "usuario_id": 12,
-  "ubicacion": {
-    "lat": 7.12,
-    "lng": -73.11
-  }
+  "direccion": "Calle 114A #43-25"
 }
 
 {
@@ -51,4 +48,41 @@ BonitaReporta-API/
 {
   "status": "error",
   "message": "El campo 'tipo' es obligatorio y debe ser: Bache, Alumbrado, Residuos, Arboles u Otro."
+}
+
+## 5. CRUD de Incidencias
+
+### POST /api/ConsultasCrud/crear.php
+**Request:**
+```json
+{
+  "titulo": "Bache en la calle",
+  "tipo": "Bache",
+  "descripcion": "Bache grande",
+  "insert_data": {
+    "titulo": "Bache en la calle",
+    "tipo": "Bache"
+  }
+}
+```
+
+### GET /api/ConsultasCrud/listar.php
+No necesita datos, trae todas las incidencias.
+
+### PUT /api/ConsultasCrud/actualizar.php
+**Request:**
+```json
+{
+  "id_incidencia": 1,
+  "update_data": {
+    "estado": "En proceso"
+  }
+}
+```
+
+### DELETE /api/ConsultasCrud/eliminar.php
+**Request:**
+```json
+{
+  "id_incidencia": 1
 }
