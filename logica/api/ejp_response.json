@@ -1,9 +1,9 @@
 {
   "status": "success|error|redirect",
-  "code": 200,               // Código HTTP simbólico
+  "code": 200,               
   "message": "string",
   "data": {
-    // Datos devueltos según la acción
+
   },
   "errors": [
     {
@@ -11,6 +11,6 @@
       "message": "descripción"
     },
     { "field": "email", "message": "Correo no registrado" }
-  ],
+  ]
 
 }

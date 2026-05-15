@@ -82,5 +82,43 @@ class UsuarioService
         ];
     }
 
+    public function login($email, $password) {
+        if (empty($email) || empty($password)) {
+            return ["success" => false, "error" => "Email y contraseña son obligatorios"];
+        }
+
+        // Buscamos al usuario por email usando la capa de datos existente
+        $resultadoData = obtenerUsuario(['email' => $email]);
+
+        if (!$resultadoData['success'] || empty($resultadoData['data'])) {
+            return ["success" => false, "error" => "Credenciales incorrectas"];
+        }
+
+        $usuario = $resultadoData['data'][0];
+
+        
+        if ($password !== $usuario['password']) {
+            return ["success" => false, "error" => "Credenciales incorrectas"];
+        }
+
+        // Login exitoso: Iniciamos sesión o generamos un token (JWT)
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        $_SESSION['usuario_id'] = $usuario['id'];
+        $_SESSION['rol']        = $usuario['rol'];
+        $_SESSION['nombre']     = $usuario['nombre'];
+
+        // No devolvemos la contraseña por seguridad
+        unset($usuario['password']);
+
+        return [
+            "success" => true, 
+            "mensaje" => "Inicio de sesión exitoso", 
+            "usuario" => $usuario
+        ];
+    }
+
 }
 ?>
