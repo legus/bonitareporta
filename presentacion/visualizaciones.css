@@ -1,7 +1,7 @@
 
 :root {
-    --fondo:         #0f0f0f;
-    --tarjeta:       #1a1a1a;
+    --fondo:         #111613;
+    --tarjeta:       #1a1f1c;
     --tarjeta-inner: #141414;
     --borde:         #252525;
     --verde:         #2ec9a0;
@@ -12,8 +12,8 @@
     --texto:         #e8eaf0;
     --gris:          #5a6270;
     --gris-claro:    #a0a8b8;
-    --fuente-base:   'DM Sans', 'Segoe UI', sans-serif;
-    --fuente-titulo: 'Syne', 'Segoe UI', sans-serif;
+    --fuente-base:    'Plus Jakarta Sans', sans-serif;
+    --fuente-titulo:  'Plus Jakarta Sans', sans-serif;
 }
   
 * {
