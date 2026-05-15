@@ -4,4 +4,5 @@ $data = json_decode(file_get_contents("php://input"), true);
 $service = new incidenciaService();
 $response = $service->crearIncidencia($data);
 echo json_encode($response);
+
 ?>
