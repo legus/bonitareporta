@@ -14,8 +14,19 @@ if ($body !== '' && $data === null && json_last_error() !== JSON_ERROR_NONE) {
     exit;
 }
 
-$data = is_array($data) ? $data : [];
-$service = new UsuarioService();
-$response = $service->crearUsuario($data);
-echo json_encode($response, JSON_UNESCAPED_UNICODE);
+class UsuarioController {
+    private $usuarioService;
+
+    public function __construct() {
+        $this->usuarioService = new UsuarioService();
+    }
+
+    public function procesarLogin($input) {
+        $email    = $input['email'] ?? null;
+        $password = $input['password'] ?? null;
+
+        return $this->usuarioService->login($email, $password);
+    }
+
+
 ?>
