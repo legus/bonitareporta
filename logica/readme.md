@@ -80,9 +80,13 @@ No necesita datos, trae todas las incidencias.
 }
 ```
 
-### DELETE /api/ConsultasCrud/eliminar.php
+### DELETE logica/api/ConsultasCrud/eliminar.php
 **Request:**
 ```json
 {
   "id_incidencia": 1
 }
+### ENDPOINTS logica/api/InicenciasCrud/crear.php
+### ENDPOINTS logica/api/InicenciasCrud/actualizar.php
+### ENDPOINTS logica/api/InicenciasCrud/eliminar.php
+### ENDPOINTS logica/api/InicenciasCrud/listar.php
