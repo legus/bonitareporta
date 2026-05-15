@@ -111,3 +111,5 @@ function showDetail(d){
     <div style="font-size:.62rem;color:#5a6270">incidencias activas</div>`;
   lmap.setView([d.lat,d.lng],15,{animate:true});
 }
+
+setTimeout(()=>lmap.invalidateSize(),200);
