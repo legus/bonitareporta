@@ -3,6 +3,7 @@
  * Dummy API - BonitaReporta
  * Archivo unificado para pruebas de integración
  * Cada acción se simula con respuestas predefinidas y validaciones básicas
+ * NOTA: Este archivo es solo para desarrollo y pruebas. No debe usarse en producción.
  */ 
 
 header('Content-Type: application/json');

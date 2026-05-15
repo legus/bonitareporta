@@ -5,6 +5,7 @@
 
 var API_URL = '/BonitaReporta/bonitareporta/logica/api/dummy_api.php';
 
+
 function mostrarToast(msg, esError) {
   var t = document.getElementById('toast');
   t.textContent = msg;
@@ -13,12 +14,10 @@ function mostrarToast(msg, esError) {
   setTimeout(function() { t.classList.remove('show'); }, 3000);
 }
 
-
 function manejarError(idInput, idError, mostrar) {
   document.getElementById(idInput).classList.toggle('invalid', mostrar);
   document.getElementById(idError).classList.toggle('visible', mostrar);
 }
-
 
 document.getElementById('email').addEventListener('input', function() {
   if (this.value) manejarError('email', 'emailError', false);
