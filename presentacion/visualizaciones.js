@@ -1,4 +1,5 @@
 
+ 
  // Reemplazar datos dummy por fetch cuando el API esté listo
 // fetch('http://localhost:[puerto]/logica/controllers/IncidenciaController.php', {
 //   method: 'POST',
