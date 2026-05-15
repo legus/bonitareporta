@@ -1,4 +1,28 @@
 <?php
+function insertarIncidencia($data) {
+    global $conn;
+
+    $campos = implode(", ", array_keys($data));
+    $placeholders = implode(", ", array_fill(0, count($data), "?"));
+    $valores = array_values($data);
+    $tipos = str_repeat("s", count($valores));
+
+    $sql = "INSERT INTO incidencias ($campos) VALUES ($placeholders)";
+    $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        return ["success" => false, "error" => $conn->error];
+    }
+
+    $stmt->bind_param($tipos, ...$valores);
+
+    if ($stmt->execute()) {
+        return ["success" => true, "insert_id" => $stmt->insert_id, "error" => null];
+    } else {
+        return ["success" => false, "insert_id" => null, "error" => $stmt->error];
+    }
+}
+
 function obtenerIncidencias($condiciones = []) {
     global $conn;
     $sql = "SELECT * FROM incidencias";
