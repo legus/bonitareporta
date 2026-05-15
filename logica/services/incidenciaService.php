@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../datos/func_datos/func.php';
+require_once __DIR__ . '/../../datos/func_datos/func_dumy.php';
 
 class incidenciaService {
 
