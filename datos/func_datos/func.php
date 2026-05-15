@@ -1,25 +1,29 @@
 <?php
+require_once '../conf_datos/conexion.php';
 function insertarIncidencia($data) {
     global $conn;
-
-    $campos = implode(", ", array_keys($data));
-    $placeholders = implode(", ", array_fill(0, count($data), "?"));
-    $valores = array_values($data);
-    $tipos = str_repeat("s", count($valores));
-
-    $sql = "INSERT INTO incidencias ($campos) VALUES ($placeholders)";
+    $sql = "INSERT INTO incidencias 
+            (titulo, tipo, descripcion, zona, barrio, usuario_id, lat, lng, estado, prioridad, fecha_creacion) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-
-    if (!$stmt) {
-        return ["success" => false, "error" => $conn->error];
-    }
-
-    $stmt->bind_param($tipos, ...$valores);
-
+    $stmt->bind_param(
+        "sssssiddsss",
+        $data['titulo'],
+        $data['tipo'],
+        $data['descripcion'],
+        $data['zona'],
+        $data['barrio'],
+        $data['usuario_id'],
+        $data['lat'],
+        $data['lng'],
+        $data['estado'],
+        $data['prioridad'],
+        $data['fecha_creacion']
+    );
     if ($stmt->execute()) {
-        return ["success" => true, "insert_id" => $stmt->insert_id, "error" => null];
+        return ["success" => true, "insert_id" => $conn->insert_id, "affected_rows" => $stmt->affected_rows, "error" => null];
     } else {
-        return ["success" => false, "insert_id" => null, "error" => $stmt->error];
+        return ["success" => false, "insert_id" => null, "affected_rows" => 0, "error" => $stmt->error];
     }
 }
 
