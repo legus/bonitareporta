@@ -430,6 +430,196 @@ select {
 }
 
 /* ============================================================
+   ESTILOS PARA GEOLOCALIZACIÓN
+   ============================================================ */
+
+.geo-group {
+    margin-bottom: 24px;
+}
+
+.geo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-geo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--input-fondo);
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    padding: 12px 18px;
+    color: var(--gris);
+    font-family: var(--fuente);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.btn-geo:hover {
+    border-color: var(--verde);
+    color: var(--verde-claro);
+    background: rgba(45, 158, 122, 0.08);
+}
+
+.btn-geo:active {
+    transform: scale(0.98);
+}
+
+.btn-geo svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-geo.success {
+    border-color: var(--verde);
+    color: var(--verde-claro);
+    background: rgba(45, 158, 122, 0.12);
+}
+
+.btn-geo.error {
+    border-color: var(--rojo);
+    color: var(--rojo);
+    background: rgba(224, 92, 92, 0.08);
+}
+
+.btn-geo.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.geo-status {
+    font-size: 13px;
+    color: var(--gris);
+    font-weight: 500;
+}
+
+.geo-status.success {
+    color: var(--verde-claro);
+}
+
+.geo-status.error {
+    color: var(--rojo);
+}
+
+.geo-coords {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+    animation: slideUp 0.3s ease;
+}
+
+.coord-item {
+    background: var(--input-fondo);
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: center;
+}
+
+.coord-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gris);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.coord-value {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--verde-claro);
+    font-family: 'Courier New', monospace;
+}
+
+.geo-hint {
+    display: block;
+    font-size: 12px;
+    color: var(--gris);
+    margin-top: 8px;
+    opacity: 0.7;
+}
+
+/* ============================================================
+   ESTILOS PARA FECHA Y HORA
+   ============================================================ */
+
+.datetime-group {
+    margin-bottom: 24px;
+}
+
+.datetime-display {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--input-fondo);
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+}
+
+.datetime-display:hover {
+    border-color: var(--verde);
+}
+
+.datetime-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    color: var(--texto);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.datetime-item svg {
+    width: 20px;
+    height: 20px;
+    color: var(--verde-claro);
+    flex-shrink: 0;
+}
+
+.btn-refresh-datetime {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    color: var(--gris);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.btn-refresh-datetime:hover {
+    border-color: var(--verde);
+    color: var(--verde-claro);
+    background: rgba(45, 158, 122, 0.08);
+}
+
+.btn-refresh-datetime:active {
+    transform: scale(0.95);
+}
+
+.btn-refresh-datetime svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ============================================================
    RESPONSIVE DESIGN
    ============================================================ */
 
@@ -492,6 +682,18 @@ select {
     .summary-row .val {
         text-align: left;
         max-width: 100%;
+    }
+
+    .geo-coords {
+        grid-template-columns: 1fr;
+    }
+
+    .datetime-display {
+        padding: 10px 14px;
+    }
+
+    .datetime-item {
+        font-size: 14px;
     }
 }
 
@@ -624,6 +826,37 @@ select {
         width: 24px;
         height: 24px;
     }
+
+    .geo-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-geo {
+        justify-content: center;
+    }
+
+    .geo-coords {
+        grid-template-columns: 1fr;
+    }
+
+    .datetime-display {
+        padding: 10px 12px;
+    }
+
+    .datetime-item {
+        font-size: 13px;
+    }
+
+    .datetime-item svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .btn-refresh-datetime {
+        width: 32px;
+        height: 32px;
+    }
 }
 
 @media (max-width: 360px) {
@@ -647,5 +880,9 @@ select {
     .btn-submit, .btn-home {
         padding: 12px;
         font-size: 14px;
+    }
+
+    .datetime-item {
+        font-size: 12px;
     }
 }
