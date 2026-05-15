@@ -1,12 +1,18 @@
 // ============================================================
-// EDITAR INCIDENCIA - BonitaReporta
-// Capa de Presentación | CRUD - Editar
-// Conexión con API Dummy (Pruebas)
+// VER / EDITAR INCIDENCIAS - BonitaReporta
+// Capa de Presentación | CRUD - Listar + Editar
+// UNIÓN INTELIGENTE: ver_incidencias.js + ver_incidencias(1).js
+// ============================================================
+
+'use strict';
+
+// ============================================================
+// SECCIÓN 1: CONFIGURACIÓN Y ESTADO (de ver_incidencias.js - editar)
 // ============================================================
 
 // --- CONFIGURACIÓN DEL API ---
-// Ruta absoluta para evitar problemas con carpetas duplicadas
-var API_URL = '/BonitaReporta/logica/api/editar_incidencia.php';
+var API_URL_EDITAR = '/BonitaReporta/logica/api/editar_incidencia.php';
+// API_URL original de ver_incidencias.js: /BonitaReporta/logica/api/editar_incidencia.php
 
 // --- Datos de la incidencia (simulando respuesta previa del API) ---
 var incidenciaOriginal = {
@@ -26,7 +32,26 @@ var incidenciaOriginal = {
 var incidenciaActual = JSON.parse(JSON.stringify(incidenciaOriginal));
 var hayCambios = false;
 
-// --- Referencias DOM ---
+// ============================================================
+// SECCIÓN 2: CONFIGURACIÓN Y ESTADO (añadido desde ver_incidencias(1).js - listar)
+// ============================================================
+
+// --- CONFIGURACIÓN DEL API ---
+var API_URL_LISTAR = '/BonitaReporta/logica/api/dummy_api.php';
+// API_URL original de ver_incidencias(1).js: /BonitaReporta/logica/api/dummy_api.php
+
+// --- Estado ---
+var incidencias = [];
+var filtros = {
+  ciudad: '',
+  estado: '',
+  tipo: ''
+};
+
+// ============================================================
+// SECCIÓN 3: REFERENCIAS DOM (ver_incidencias.js - editar)
+// ============================================================
+
 var form = document.getElementById('editarForm');
 var inputs = {
   titulo: document.getElementById('titulo'),
@@ -58,8 +83,24 @@ var cambiosIndicator = document.getElementById('cambiosIndicator');
 var modalConfirmar = document.getElementById('modalConfirmar');
 var resumenCambios = document.getElementById('resumenCambios');
 
+// ============================================================
+// SECCIÓN 4: REFERENCIAS DOM (añadido desde ver_incidencias(1).js - listar)
+// ============================================================
+
+var grid = document.getElementById('incidenciasGrid');
+var emptyState = document.getElementById('emptyState');
+var totalCount = document.getElementById('totalCount');
+var filtrosPanel = document.getElementById('filtrosPanel');
+var btnFiltros = document.getElementById('btnFiltros');
+
+// ============================================================
+// SECCIÓN 5: FUNCIONES DE EDICIÓN (ver_incidencias.js)
+// ============================================================
+
 // --- Inicializar formulario ---
 function inicializarFormulario() {
+  if (!inputs.titulo) return; // Solo si estamos en la página de edición
+
   inputs.titulo.value = incidenciaActual.titulo;
   inputs.tipo.value = incidenciaActual.tipo;
   inputs.estado.value = incidenciaActual.estado;
@@ -75,6 +116,8 @@ function inicializarFormulario() {
 
 // --- Actualizar vista previa ---
 function actualizarVistaPrevia() {
+  if (!preview.id) return; // Solo si estamos en la página de edición
+
   preview.id.textContent = '#' + incidenciaActual.id;
   preview.titulo.textContent = incidenciaActual.titulo || 'Sin titulo';
   preview.tipo.textContent = incidenciaActual.tipo;
@@ -112,30 +155,17 @@ function detectarCambios() {
 }
 
 function actualizarIndicadorCambios() {
+  if (!cambiosIndicator) return; // Solo si estamos en la página de edición
+
   var cambios = detectarCambios();
   hayCambios = cambios.length > 0;
   cambiosIndicator.classList.toggle('visible', hayCambios);
 }
 
-// --- Event listeners ---
-Object.keys(inputs).forEach(function(key) {
-  if (key === 'usuario_id') return;
-
-  inputs[key].addEventListener('input', function() {
-    incidenciaActual[key] = this.value;
-    actualizarVistaPrevia();
-    actualizarIndicadorCambios();
-  });
-
-  inputs[key].addEventListener('change', function() {
-    incidenciaActual[key] = this.value;
-    actualizarVistaPrevia();
-    actualizarIndicadorCambios();
-  });
-});
-
 // --- Validación ---
 function validarFormulario() {
+  if (!inputs.titulo) return false; // Solo si estamos en la página de edición
+
   var valido = true;
   var camposRequeridos = ['titulo', 'tipo', 'estado', 'prioridad', 'ciudad', 'barrio', 'direccion', 'descripcion'];
 
@@ -152,14 +182,10 @@ function validarFormulario() {
   return valido;
 }
 
-Object.keys(inputs).forEach(function(key) {
-  inputs[key].addEventListener('input', function() {
-    this.closest('.form-group').classList.remove('error');
-  });
-});
-
 // --- Generar resumen ---
 function generarResumenCambios() {
+  if (!resumenCambios) return; // Solo si estamos en la página de edición
+
   var cambios = detectarCambios();
   var html = '<h4>Cambios realizados</h4>';
 
@@ -182,52 +208,60 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function truncar(str, max) {
-  if (str.length <= max) return str;
-  return str.substring(0, max) + '...';
-}
-
 // ============================================================
-// SUBMIT: Enviar datos al API Dummy vía fetch()
+// SECCIÓN 6: FUNCIONES DE LISTADO (añadido desde ver_incidencias(1).js)
 // ============================================================
-form.addEventListener('submit', function(e) {
-  e.preventDefault();
 
-  if (!validarFormulario()) return;
+// --- Renderizar grid ---
+function renderizarIncidencias() {
+  if (!grid) return; // Solo si estamos en la página de listado
 
-  if (!hayCambios) {
-    mostrarToast('No has realizado ningun cambio', true);
+  if (incidencias.length === 0) {
+    grid.innerHTML = '';
+    if (emptyState) emptyState.classList.add('visible');
+    if (totalCount) totalCount.textContent = '0';
     return;
   }
 
-  document.getElementById('confirmarId').textContent = '#' + incidenciaActual.id;
-  generarResumenCambios();
-  modalConfirmar.classList.add('active');
-});
+  if (emptyState) emptyState.classList.remove('visible');
+  if (totalCount) totalCount.textContent = incidencias.length;
 
-// --- Cancelar edición ---
-document.getElementById('btnCancelar').addEventListener('click', function() {
-  if (hayCambios) {
-    var confirmar = window.confirm('Tienes cambios sin guardar. ¿Seguro que deseas salir?');
-    if (!confirmar) return;
-  }
-  window.location.href = '../VerIncidencias/ver_incidencias.html';
-});
+  grid.innerHTML = incidencias.map(function(inc) {
+    return `
+      <div class="incidencia-card" data-id="${inc.id}">
+        <div class="card-header">
+          <span class="tag tipo-${inc.tipo.toLowerCase()}">${inc.tipo}</span>
+          <span class="badge estado-${inc.estado.toLowerCase().replace(/\s+/g, '-')}">${inc.estado}</span>
+        </div>
+        <h3 class="card-titulo">${inc.titulo}</h3>
+        <p class="card-descripcion">${truncar(inc.descripcion, 80)}</p>
+        <div class="card-meta">
+          <span>📍 ${inc.ciudad} - ${inc.barrio}</span>
+          <span>📅 ${inc.fecha}</span>
+        </div>
+        <div class="card-footer">
+          <span class="prioridad-${inc.prioridad.toLowerCase()}">${inc.prioridad}</span>
+          <button class="btn-editar" onclick="editarIncidencia(${inc.id})">Editar</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
 
-// --- Modal: Seguir editando ---
-document.getElementById('btnCancelarModal').addEventListener('click', function() {
-  modalConfirmar.classList.remove('active');
-});
+function editarIncidencia(id) {
+  window.location.href = '../editarIncidencias/editarIncidencias.html?id=' + id;
+}
 
-modalConfirmar.addEventListener('click', function(e) {
-  if (e.target === modalConfirmar) {
-    modalConfirmar.classList.remove('active');
-  }
-});
+function mostrarError(msg) {
+  if (grid) grid.innerHTML = `<div class="error-state">${msg}</div>`;
+  if (emptyState) emptyState.classList.remove('visible');
+  if (totalCount) totalCount.textContent = '0';
+}
 
 // ============================================================
-// FUNCIÓN HELPER
+// SECCIÓN 7: FUNCIÓN HELPER COMPARTIDA
 // ============================================================
+
 function manejarRespuesta(response) {
   console.log("[PRUEBA] Status HTTP:", response.status);
 
@@ -248,39 +282,49 @@ function manejarRespuesta(response) {
 }
 
 // ============================================================
-// CONFIRMAR GUARDAR: Enviar al API Dummy
+// SECCIÓN 8: FUNCIÓN HELPER - truncar (versión mejorada de ver_incidencias(1).js)
+// Incluye validación de null/undefined que faltaba en ver_incidencias.js
 // ============================================================
-document.getElementById('btnConfirmarGuardar').addEventListener('click', function() {
-  var btn = this;
-  btn.classList.add('loading');
+function truncar(str, max) {
+  if (!str || str.length <= max) return str;
+  return str.substring(0, max) + '...';
+}
 
-  // ============================================================
-  // CONSTRUIR CONTRATO JSON SEGÚN GUÍA DE INTEGRACIÓN
-  // ============================================================
+// ============================================================
+// SECCIÓN 9: FUNCIÓN HELPER - mostrarToast (compartida)
+// ============================================================
+function mostrarToast(msg, esError) {
+  var t = document.getElementById('toast');
+  if (!t) return; // Solo si existe el elemento toast
+  t.textContent = msg;
+  t.className = 'toast' + (esError ? ' error' : '');
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+
+// ============================================================
+// SECCIÓN 10: CARGAR INCIDENCIAS (añadido desde ver_incidencias(1).js - listar)
+// ============================================================
+function cargarIncidencias() {
+  if (!grid) return; // Solo si estamos en la página de listado
+
+  grid.innerHTML = '<div class="loading">Cargando incidencias...</div>';
+
   var contratoJSON = {
-    accion: "editar_incidencia",
+    accion: "ver_incidencia",
     datos: {
-      incidencia_id: incidenciaActual.id,
-      titulo: incidenciaActual.titulo,
-      tipo: incidenciaActual.tipo,
-      estado: incidenciaActual.estado,
-      prioridad: incidenciaActual.prioridad,
-      ciudad: incidenciaActual.ciudad,
-      barrio: incidenciaActual.barrio,
-      direccion: incidenciaActual.direccion,
-      descripcion: incidenciaActual.descripcion
+      filtro_ciudad: filtros.ciudad,
+      filtro_estado: filtros.estado,
+      filtro_tipo: filtros.tipo
     }
   };
 
   console.log("[PRUEBA] =========================================");
-  console.log("[PRUEBA] Enviando a:", API_URL);
+  console.log("[PRUEBA] Enviando a:", API_URL_LISTAR);
   console.log("[PRUEBA] Payload:", JSON.stringify(contratoJSON, null, 2));
   console.log("[PRUEBA] =========================================");
 
-  // ============================================================
-  // FETCH: Envío HTTP POST con JSON al Dummy PHP
-  // ============================================================
-  fetch(API_URL, {
+  fetch(API_URL_LISTAR, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -293,42 +337,227 @@ document.getElementById('btnConfirmarGuardar').addEventListener('click', functio
     console.log("[PRUEBA] exito:", respuesta.exito, "| mensaje:", respuesta.mensaje);
 
     if (respuesta.exito === true) {
-      // ÉXITO
-      incidenciaOriginal = JSON.parse(JSON.stringify(incidenciaActual));
-      hayCambios = false;
-
-      modalConfirmar.classList.remove('active');
-      btn.classList.remove('loading');
-      cambiosIndicator.classList.remove('visible');
-
-      mostrarToast('Incidencia #' + incidenciaActual.id + ' actualizada correctamente', false);
-
-      setTimeout(function() {
-        window.location.href = '../VerIncidencias/ver_incidencias.html';
-      }, 1500);
+      incidencias = respuesta.datos.incidencias;
+      renderizarIncidencias();
     } else {
-      // FALLIDO
-      throw new Error(respuesta.mensaje || 'Error al actualizar');
+      mostrarError(respuesta.mensaje || 'Error al cargar incidencias');
     }
   })
   .catch(function(error) {
     console.error("[PRUEBA] Error:", error);
-    btn.classList.remove('loading');
-    modalConfirmar.classList.remove('active');
-    mostrarToast('Error de conexión: ' + error.message, true);
+    mostrarError('Error de conexión. Verifica XAMPP.');
   });
-});
-
-// --- Toast ---
-function mostrarToast(msg, esError) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (esError ? ' error' : '');
-  t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 3000);
 }
 
-// --- Inicializar ---
+// ============================================================
+// SECCIÓN 11: EVENT LISTENERS DE EDICIÓN (ver_incidencias.js)
+// ============================================================
+
+// --- Event listeners de inputs ---
+if (inputs.titulo) {
+  Object.keys(inputs).forEach(function(key) {
+    if (key === 'usuario_id') return;
+
+    inputs[key].addEventListener('input', function() {
+      incidenciaActual[key] = this.value;
+      actualizarVistaPrevia();
+      actualizarIndicadorCambios();
+    });
+
+    inputs[key].addEventListener('change', function() {
+      incidenciaActual[key] = this.value;
+      actualizarVistaPrevia();
+      actualizarIndicadorCambios();
+    });
+  });
+}
+
+// --- Limpiar errores en input ---
+if (inputs.titulo) {
+  Object.keys(inputs).forEach(function(key) {
+    inputs[key].addEventListener('input', function() {
+      this.closest('.form-group').classList.remove('error');
+    });
+  });
+}
+
+// --- Submit del formulario de edición ---
+if (form) {
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    if (!validarFormulario()) return;
+
+    if (!hayCambios) {
+      mostrarToast('No has realizado ningun cambio', true);
+      return;
+    }
+
+    var confirmarId = document.getElementById('confirmarId');
+    if (confirmarId) confirmarId.textContent = '#' + incidenciaActual.id;
+    generarResumenCambios();
+    if (modalConfirmar) modalConfirmar.classList.add('active');
+  });
+}
+
+// --- Cancelar edición ---
+var btnCancelar = document.getElementById('btnCancelar');
+if (btnCancelar) {
+  btnCancelar.addEventListener('click', function() {
+    if (hayCambios) {
+      var confirmar = window.confirm('Tienes cambios sin guardar. ¿Seguro que deseas salir?');
+      if (!confirmar) return;
+    }
+    window.location.href = '../VerIncidencias/ver_incidencias.html';
+  });
+}
+
+// --- Modal: Seguir editando ---
+var btnCancelarModal = document.getElementById('btnCancelarModal');
+if (btnCancelarModal) {
+  btnCancelarModal.addEventListener('click', function() {
+    if (modalConfirmar) modalConfirmar.classList.remove('active');
+  });
+}
+
+if (modalConfirmar) {
+  modalConfirmar.addEventListener('click', function(e) {
+    if (e.target === modalConfirmar) {
+      modalConfirmar.classList.remove('active');
+    }
+  });
+}
+
+// --- Confirmar guardar ---
+var btnConfirmarGuardar = document.getElementById('btnConfirmarGuardar');
+if (btnConfirmarGuardar) {
+  btnConfirmarGuardar.addEventListener('click', function() {
+    var btn = this;
+    btn.classList.add('loading');
+
+    var contratoJSON = {
+      accion: "editar_incidencia",
+      datos: {
+        incidencia_id: incidenciaActual.id,
+        titulo: incidenciaActual.titulo,
+        tipo: incidenciaActual.tipo,
+        estado: incidenciaActual.estado,
+        prioridad: incidenciaActual.prioridad,
+        ciudad: incidenciaActual.ciudad,
+        barrio: incidenciaActual.barrio,
+        direccion: incidenciaActual.direccion,
+        descripcion: incidenciaActual.descripcion
+      }
+    };
+
+    console.log("[PRUEBA] =========================================");
+    console.log("[PRUEBA] Enviando a:", API_URL_EDITAR);
+    console.log("[PRUEBA] Payload:", JSON.stringify(contratoJSON, null, 2));
+    console.log("[PRUEBA] =========================================");
+
+    fetch(API_URL_EDITAR, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(contratoJSON)
+    })
+    .then(manejarRespuesta)
+    .then(function(respuesta) {
+      console.log("[PRUEBA] exito:", respuesta.exito, "| mensaje:", respuesta.mensaje);
+
+      if (respuesta.exito === true) {
+        incidenciaOriginal = JSON.parse(JSON.stringify(incidenciaActual));
+        hayCambios = false;
+
+        if (modalConfirmar) modalConfirmar.classList.remove('active');
+        btn.classList.remove('loading');
+        if (cambiosIndicator) cambiosIndicator.classList.remove('visible');
+
+        mostrarToast('Incidencia #' + incidenciaActual.id + ' actualizada correctamente', false);
+
+        setTimeout(function() {
+          window.location.href = '../VerIncidencias/ver_incidencias.html';
+        }, 1500);
+      } else {
+        throw new Error(respuesta.mensaje || 'Error al actualizar');
+      }
+    })
+    .catch(function(error) {
+      console.error("[PRUEBA] Error:", error);
+      btn.classList.remove('loading');
+      if (modalConfirmar) modalConfirmar.classList.remove('active');
+      mostrarToast('Error de conexión: ' + error.message, true);
+    });
+  });
+}
+
+// ============================================================
+// SECCIÓN 12: EVENT LISTENERS DE LISTADO (añadido desde ver_incidencias(1).js)
+// ============================================================
+
+// --- Toggle filtros ---
+if (btnFiltros) {
+  btnFiltros.addEventListener('click', function() {
+    filtrosPanel.classList.toggle('active');
+  });
+}
+
+// --- Aplicar filtros ---
+var btnAplicarFiltros = document.getElementById('btnAplicarFiltros');
+if (btnAplicarFiltros) {
+  btnAplicarFiltros.addEventListener('click', function() {
+    var filtroCiudad = document.getElementById('filtroCiudad');
+    var filtroEstado = document.getElementById('filtroEstado');
+    var filtroTipo = document.getElementById('filtroTipo');
+
+    filtros.ciudad = filtroCiudad ? filtroCiudad.value : '';
+    filtros.estado = filtroEstado ? filtroEstado.value : '';
+    filtros.tipo = filtroTipo ? filtroTipo.value : '';
+
+    cargarIncidencias();
+    if (filtrosPanel) filtrosPanel.classList.remove('active');
+  });
+}
+
+// --- Limpiar filtros ---
+var btnLimpiarFiltros = document.getElementById('btnLimpiarFiltros');
+if (btnLimpiarFiltros) {
+  btnLimpiarFiltros.addEventListener('click', function() {
+    var filtroCiudad = document.getElementById('filtroCiudad');
+    var filtroEstado = document.getElementById('filtroEstado');
+    var filtroTipo = document.getElementById('filtroTipo');
+
+    if (filtroCiudad) filtroCiudad.value = '';
+    if (filtroEstado) filtroEstado.value = '';
+    if (filtroTipo) filtroTipo.value = '';
+
+    filtros = { ciudad: '', estado: '', tipo: '' };
+    cargarIncidencias();
+  });
+}
+
+// --- Redirección: Nueva Incidencia ---
+var btnNuevaIncidencia = document.getElementById('btnNuevaIncidencia');
+if (btnNuevaIncidencia) {
+  btnNuevaIncidencia.addEventListener('click', function() {
+    window.open('../formulario/formulario.html', '_blank');
+  });
+}
+
+// ============================================================
+// SECCIÓN 13: INICIALIZACIÓN
+// ============================================================
+
 document.addEventListener('DOMContentLoaded', function() {
-  inicializarFormulario();
+  // Inicializar edición si estamos en la página de editar
+  if (inputs.titulo) {
+    inicializarFormulario();
+  }
+
+  // Inicializar listado si estamos en la página de listar
+  if (grid) {
+    cargarIncidencias();
+  }
 });

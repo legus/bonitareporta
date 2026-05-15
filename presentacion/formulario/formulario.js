@@ -1,12 +1,14 @@
 // ============================================================
 // FORMULARIO REPORTE - BonitaReporta
 // Capa de Presentación | Conexión con API Dummy (Pruebas)
+// UNIÓN INTELIGENTE: formulario(1).js + funcionalidades de formulario.js
 // ============================================================
 
 'use strict';
 
 // --- CONFIGURACIÓN DEL API ---
-var API_URL = '/BonitaReporta/logica/api/crear_incidencia.php';
+var API_URL = '/BonitaReporta/bonitareporta/logica/api/dummy_api.php';
+// API alternativo (de formulario.js): /BonitaReporta/logica/api/crear_incidencia.php
 
 var form = document.getElementById('reportForm');
 var formCard = document.getElementById('formCard');
@@ -14,7 +16,7 @@ var responseCard = document.getElementById('responseCard');
 var btnSubmit = document.getElementById('btnSubmit');
 var btnNew = document.getElementById('btnNew');
 
-// --- ELEMENTOS DE GEOLOCALIZACIÓN ---
+// --- ELEMENTOS DE GEOLOCALIZACIÓN (añadido desde formulario.js) ---
 var btnGeo = document.getElementById('btnGeo');
 var geoStatus = document.getElementById('geoStatus');
 var geoCoords = document.getElementById('geoCoords');
@@ -23,10 +25,10 @@ var lngInput = document.getElementById('longitud');
 var latValue = document.getElementById('latValue');
 var lngValue = document.getElementById('lngValue');
 
-// --- ELEMENTOS DE FECHA Y HORA - UNA SOLA VARIABLE ---
+// --- ELEMENTOS DE FECHA Y HORA (añadido desde formulario.js) ---
 var fechaHoraValor = document.getElementById('fechaHoraValor');
 var btnRefreshDatetime = document.getElementById('btnRefreshDatetime');
-var fechaHoraInput = document.getElementById('fecha_hora_registro'); // ← UNA SOLA VARIABLE
+var fechaHoraInput = document.getElementById('fecha_hora_registro');
 
 // Datos de ejemplo prellenados
 var datosEjemplo = {
@@ -46,32 +48,32 @@ Object.keys(datosEjemplo).forEach(function(key) {
 });
 
 // ============================================================
-// FECHA Y HORA - UNA SOLA VARIABLE
+// FECHA Y HORA 
 // ============================================================
 
 function actualizarFechaHora() {
     var ahora = new Date();
-    
+
     // Formato dd/mm/aa
     var dia = String(ahora.getDate()).padStart(2, '0');
     var mes = String(ahora.getMonth() + 1).padStart(2, '0');
     var anio = String(ahora.getFullYear()).slice(-2);
     var fechaStr = dia + '/' + mes + '/' + anio;
-    
+
     // Formato hh:mm (24h)
     var horas = String(ahora.getHours()).padStart(2, '0');
     var minutos = String(ahora.getMinutes()).padStart(2, '0');
     var horaStr = horas + ':' + minutos;
-    
+
     // UNA SOLA VARIABLE COMBINADA: "dd/mm/aa hh:mm"
     var fechaHoraCompleta = fechaStr + ' ' + horaStr;
-    
+
     // Mostrar en UI
-    fechaHoraValor.textContent = fechaHoraCompleta;
-    
-    // Guardar en input oculto (UNA SOLA VARIABLE)
-    fechaHoraInput.value = fechaHoraCompleta;
-    
+    if (fechaHoraValor) fechaHoraValor.textContent = fechaHoraCompleta;
+
+    // Guardar en input oculto
+    if (fechaHoraInput) fechaHoraInput.value = fechaHoraCompleta;
+
     console.log('[FECHA] Actualizado:', fechaHoraCompleta);
 }
 
@@ -85,8 +87,10 @@ setInterval(actualizarFechaHora, 60000);
 if (btnRefreshDatetime) {
     btnRefreshDatetime.addEventListener('click', function() {
         var icon = this.querySelector('svg');
-        icon.style.animation = 'spin 0.5s ease';
-        setTimeout(function() { icon.style.animation = ''; }, 500);
+        if (icon) {
+            icon.style.animation = 'spin 0.5s ease';
+            setTimeout(function() { icon.style.animation = ''; }, 500);
+        }
         actualizarFechaHora();
     });
 }
@@ -122,7 +126,7 @@ function validateForm() {
 }
 
 // ============================================================
-// GEOLOCALIZACIÓN
+// GEOLOCALIZACIÓN 
 // ============================================================
 
 function obtenerUbicacion() {
@@ -149,7 +153,8 @@ function obtenerUbicacion() {
 
             btnGeo.classList.remove('loading', 'error');
             btnGeo.classList.add('success');
-            btnGeo.querySelector('.btn-geo-text').textContent = 'Ubicación obtenida';
+            var btnText = btnGeo.querySelector('.btn-geo-text');
+            if (btnText) btnText.textContent = 'Ubicación obtenida';
 
             var precisionText = precision < 50 ? 'Alta precisión' : 
                                precision < 200 ? 'Precisión media' : 'Precisión baja';
@@ -160,7 +165,7 @@ function obtenerUbicacion() {
         function(error) {
             btnGeo.classList.remove('loading', 'success');
             btnGeo.classList.add('error');
-            
+
             var mensaje = 'Error al obtener ubicación';
             switch(error.code) {
                 case error.PERMISSION_DENIED:
@@ -173,7 +178,7 @@ function obtenerUbicacion() {
                     mensaje = 'Tiempo de espera agotado. Intenta de nuevo.';
                     break;
             }
-            
+
             mostrarEstadoGeo(mensaje, 'error');
             console.error('[GEO] Error:', error.message);
         },
@@ -223,7 +228,7 @@ form.addEventListener('submit', function(e) {
     e.preventDefault();
     if (!validateForm()) return;
 
-    // Actualizar fecha/hora justo antes de enviar para máxima precisión
+    // Actualizar fecha/hora justo antes de enviar para máxima precisión (añadido desde formulario.js)
     actualizarFechaHora();
 
     btnSubmit.classList.add('loading');
@@ -243,8 +248,7 @@ form.addEventListener('submit', function(e) {
             usuario_id: parseInt(data.usuario_id) || 0,
             latitud: data.latitud ? parseFloat(data.latitud) : null,
             longitud: data.longitud ? parseFloat(data.longitud) : null,
-            // UNA SOLA VARIABLE COMBINADA
-            fecha_hora_registro: data.fecha_hora_registro  // "15/05/26 16:56"
+            fecha_hora_registro: data.fecha_hora_registro  // "dd/mm/aa hh:mm"
         }
     };
 
@@ -261,7 +265,7 @@ form.addEventListener('submit', function(e) {
         },
         body: JSON.stringify(contratoJSON)
     })
-    .then(manejarRespuesta)
+    .then(manejarRespuesta)  // Usar helper mejorado desde formulario.js
     .then(function(respuesta) {
         console.log("[PRUEBA] exito:", respuesta.exito, "| mensaje:", respuesta.mensaje);
 
@@ -274,18 +278,23 @@ form.addEventListener('submit', function(e) {
             document.getElementById('sumZona').textContent = data.zona + ' / ' + data.barrio;
             document.getElementById('sumDireccion').textContent = data.direccion;
 
-            // Coordenadas
+            // mostrar coordenadas en resumen
             var sumGeoRow = document.getElementById('sumGeoRow');
             var sumGeo = document.getElementById('sumGeo');
-            if (data.latitud && data.longitud) {
-                sumGeo.textContent = data.latitud + ', ' + data.longitud;
-                sumGeoRow.style.display = 'flex';
-            } else {
-                sumGeoRow.style.display = 'none';
+            if (sumGeoRow && sumGeo) {
+                if (data.latitud && data.longitud) {
+                    sumGeo.textContent = data.latitud + ', ' + data.longitud;
+                    sumGeoRow.style.display = 'flex';
+                } else {
+                    sumGeoRow.style.display = 'none';
+                }
             }
 
-            // UNA SOLA VARIABLE EN EL RESUMEN
-            document.getElementById('sumFechaHora').textContent = data.fecha_hora_registro || '--';
+            // mostrar fecha/hora en resumen
+            var sumFechaHora = document.getElementById('sumFechaHora');
+            if (sumFechaHora) {
+                sumFechaHora.textContent = data.fecha_hora_registro || '--';
+            }
 
             document.getElementById('sumDescripcion').textContent = data.descripcion;
 
@@ -308,18 +317,21 @@ form.addEventListener('submit', function(e) {
 
 btnNew.addEventListener('click', function() {
     form.reset();
-    
-    // Resetear geolocalización
-    latInput.value = '';
-    lngInput.value = '';
-    geoCoords.style.display = 'none';
-    btnGeo.classList.remove('success', 'error');
-    btnGeo.querySelector('.btn-geo-text').textContent = 'Obtener mi ubicación';
+
+    // resetear geolocalización
+    if (latInput) latInput.value = '';
+    if (lngInput) lngInput.value = '';
+    if (geoCoords) geoCoords.style.display = 'none';
+    if (btnGeo) {
+        btnGeo.classList.remove('success', 'error');
+        var btnText = btnGeo.querySelector('.btn-geo-text');
+        if (btnText) btnText.textContent = 'Obtener mi ubicación';
+    }
     mostrarEstadoGeo('', '');
-    
-    // Resetear fecha/hora (se actualiza automáticamente)
+
+    // resetear fecha/hora (se actualiza automáticamente)
     actualizarFechaHora();
-    
+
     responseCard.classList.remove('show');
     formCard.style.display = 'block';
     formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
