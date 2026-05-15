@@ -85,7 +85,7 @@ La aplicación se comunica con la capa de lógica mediante solicitudes HTTP util
   "table": "incidencias",
   "fields": [
     "tipo_incidencia",
-    "AVG(TIMESTAMPDIFF(HOUR, fecha_reporte, fecha_cierre)) AS promedio_horas"
+    "AVG(TIMESTAMPDIFF(fecha_reporte, fecha_cierre)) AS promedio_horas"
   ],
   "where": {
     "condition": "estado = ? AND fecha_cierre IS NOT NULL AND fecha_reporte >= ?",
@@ -127,10 +127,12 @@ La aplicación se comunica con la capa de lógica mediante solicitudes HTTP util
   "fields": [
     "ciudad_zona",
     "barrio",
+    "AVG(latitud) AS lat",
+    "AVG(longitud) AS lng",
     "COUNT(*) AS conteo"
   ],
   "where": {
-    "condition": "estado NOT IN (?, ?) AND fecha_reporte >= ?",
+    "condition": "estado NOT IN (?, ?) AND fecha_reporte >= ? AND latitud IS NOT NULL AND longitud IS NOT NULL",
     "params": ["resuelto", "cerrado", "FECHA_HACE_30_DIAS"]
   },
   "order_by": "conteo DESC, ciudad_zona ASC",
