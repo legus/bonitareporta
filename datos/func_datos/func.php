@@ -29,18 +29,40 @@ function insertarIncidencia($data) {
 
 function obtenerIncidencias($condiciones = []) {
     global $conn;
+
     $sql = "SELECT * FROM incidencias";
+    $params = [];
+    $types = "";
+
     if (!empty($condiciones)) {
         $campo = array_key_first($condiciones);
         $valor = $condiciones[$campo];
-        $sql .= " WHERE $campo = '$valor'";
+
+        $sql .= " WHERE $campo = ?";
+        $params[] = $valor;
+        $types .= "s";
     }
-    $result = $conn->query($sql);
+
+    $stmt = $conn->prepare($sql);
+
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
     $rows = [];
+
     while ($row = $result->fetch_assoc()) {
         $rows[] = $row;
     }
-    return ["success" => true, "data" => $rows, "error" => null];
+
+    return [
+        "success" => true,
+        "data" => $rows,
+        "error" => null
+    ];
 }
 
 function actualizarIncidencia($data, $condiciones) {
