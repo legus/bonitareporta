@@ -2,10 +2,37 @@
 require_once '../conf_datos/conexion.php';
 function insertarIncidencia($data) {
     global $conn;
+
+    // Validación de campos obligatorios
+    $camposRequeridos = [
+        'titulo',
+        'tipo',
+        'descripcion',
+        'zona',
+        'barrio',
+        'usuario_id',
+        'lat',
+        'lng',
+        'prioridad'
+    ];
+
+    foreach ($camposRequeridos as $campo) {
+        if (!isset($data[$campo]) || empty($data[$campo])) {
+            return [
+                "success" => false,
+                "insert_id" => null,
+                "affected_rows" => 0,
+                "error" => "El campo '$campo' es obligatorio"
+            ];
+        }
+    }
+
     $sql = "INSERT INTO incidencias 
             (titulo, tipo, descripcion, zona, barrio, usuario_id, lat, lng, estado, prioridad, fecha_creacion) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
     $stmt = $conn->prepare($sql);
+
     $stmt->bind_param(
         "sssssiddsss",
         $data['titulo'],
@@ -18,12 +45,23 @@ function insertarIncidencia($data) {
         $data['lng'],
         $data['estado'],
         $data['prioridad'],
-        $data['fecha_creacion']
+        date("Y-m-d H:i:s")
     );
+
     if ($stmt->execute()) {
-        return ["success" => true, "insert_id" => $conn->insert_id, "affected_rows" => $stmt->affected_rows, "error" => null];
+        return [
+            "success" => true,
+            "insert_id" => $conn->insert_id,
+            "affected_rows" => $stmt->affected_rows,
+            "error" => null
+        ];
     } else {
-        return ["success" => false, "insert_id" => null, "affected_rows" => 0, "error" => $stmt->error];
+        return [
+            "success" => false,
+            "insert_id" => null,
+            "affected_rows" => 0,
+            "error" => $stmt->error
+        ];
     }
 }
 

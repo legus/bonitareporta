@@ -3,18 +3,46 @@ require_once '../conf_datos/conexion.php';
 
 function registrarUsuario($data) {
     global $conn;
+
+    // Validar email
+    if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+        return [
+            "success" => false,
+            "insert_id" => null,
+            "affected_rows" => 0,
+            "error" => "Correo electrónico inválido"
+        ];
+    }
+
+    // Encriptar contraseña
+    $passwordHash = password_hash($data['password'], PASSWORD_DEFAULT);
+
     $sql = "INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)";
+
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssss",
+
+    $stmt->bind_param(
+        "ssss",
         $data['nombre'],
         $data['email'],
-        $data['password'],
+        $passwordHash,
         $data['rol']
     );
+
     if ($stmt->execute()) {
-        return ["success" => true, "insert_id" => $conn->insert_id, "affected_rows" => $stmt->affected_rows, "error" => null];
+        return [
+            "success" => true,
+            "insert_id" => $conn->insert_id,
+            "affected_rows" => $stmt->affected_rows,
+            "error" => null
+        ];
     } else {
-        return ["success" => false, "insert_id" => null, "affected_rows" => 0, "error" => $stmt->error];
+        return [
+            "success" => false,
+            "insert_id" => null,
+            "affected_rows" => 0,
+            "error" => $stmt->error
+        ];
     }
 }
 
